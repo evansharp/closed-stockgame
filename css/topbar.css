@@ -1,0 +1,59 @@
+#topbar{
+	width: 100%;
+	height: 54px;
+	margin: 0;
+	background: #03C9A9;
+	text-align: center; /* center tabs */
+}
+
+/* reset some layout styles */
+#topbar ul, #topbar li{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#topbar li{
+	display: inline;
+}
+
+#topbar li a, #login_button, #logout_button{
+	position: relative;
+	color: #333;
+  padding: 0.7em 0.7em 0.6em;
+	font-size: 140%;
+	text-decoration: none;
+	display: inline-block;
+}
+#topbar li a.active:after{
+	content: '▲';
+	font-size: 0.8em;
+	color: #fff;
+	position: absolute;
+	bottom: -8px;
+	left: 41%;
+}
+
+#topbar li a:hover, #login_button:hover, #logout_button:hover{
+	background: #333;
+	color: #fefefe;
+}
+
+#login_button, #logout_button{
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+#logout_button{
+	padding-left: 3.5em;
+}
+
+#topbar img.user_img {
+	border-radius: 50% 50% 50% 50%;
+	border: 3px solid white;
+	width: 37px;
+	position:absolute;
+	top: 5px;
+	right: 6.5em;
+	z-index: 50;
+}

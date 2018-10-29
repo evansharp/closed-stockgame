@@ -1,0 +1,22 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+
+$route['login'] = 'auth/login';
+$route['logout'] = 'auth/logout';
+
+$route['ticker'] = 'ticker';
+$route['buysell'] = 'buysell';
+$route['portfolio'] = 'portfolio';
+$route['history'] = 'history';
+$route['prospectus'] = 'prospectus';
+$route['leaderboard'] = 'leaderboard';
+
+$route['admin'] = 'admin';
+//$route['ajax/(:any)']['post'] = 'ajax/$1';
+
+$route['default_controller'] = 'ticker';
+$route['404_override'] = '';
+$route['translate_uri_dashes'] = FALSE;
+
+
