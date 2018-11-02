@@ -64,7 +64,6 @@ class MY_Controller extends CI_Controller {
 
 				$this->googleUserData = $OAuthService->userinfo->get();
 
-
 				//is admin user?
 				if($this->googleUserData['email'] == "evan.sharp@coastmountainacademy.ca"){
 					$this->is_admin = true;

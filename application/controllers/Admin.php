@@ -69,7 +69,6 @@ class Admin extends MY_Controller {
 					'is_admin' => false, //don't show admin link-button
 					'active_nav' => '',
 					'logged_in' => $this->logged_in,
-					'authorized' => true,
 					'login_url' => $this->authUrl,
 					'userData' => $this->googleUserData,
 					'page' 	=> $this->load->view('pages/admin', $data ,TRUE)
