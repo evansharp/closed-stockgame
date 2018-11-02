@@ -1,1 +1,4 @@
 .DS_Store
+
+#Google API Credentials
+client_secret.json
