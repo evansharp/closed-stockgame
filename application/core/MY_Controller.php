@@ -1,12 +1,12 @@
 <?php
 
 class MY_Controller extends CI_Controller {
-	protected $authorized = false;
+
 	protected $logged_in = false;
 	protected $is_admin = false;
 	protected $authUrl;
 	protected $googleUserData;
-	protected $googleClassroomList;
+
 	protected $access_token;
 
 	public function __construct() {
@@ -30,14 +30,14 @@ class MY_Controller extends CI_Controller {
 		// Create Client Request to access Google API
 		$client = new Google_Client();
 		$client->setApplicationName("The Stock Market Game");
-		$client->setRedirectUri($redirect_uri);
+		$client->setAuthConfig( FCPATH . 'client_secret.json');
+		$client->setRedirectUri( $redirect_uri );
 		$client->addScope("https://www.googleapis.com/auth/userinfo.profile");
 		$client->addScope("https://www.googleapis.com/auth/userinfo.email");
-		$client->addScope("https://www.googleapis.com/auth/classroom.courses.readonly");
 
 		// Send Client Request
 		$OAuthService = new Google_Service_Oauth2( $client );
-		$ClassroomService = new Google_Service_Classroom( $client );
+
 
 
 		// Add Access Token to Session
@@ -63,48 +63,30 @@ class MY_Controller extends CI_Controller {
 				$adminmodel = new Adminmodel();
 
 				$this->googleUserData = $OAuthService->userinfo->get();
-				$this->googleClassroomList = $ClassroomService->courses->listCourses();
+
 
 				//is admin user?
 				if($this->googleUserData['email'] == "evan.sharp@coastmountainacademy.ca"){
 					$this->is_admin = true;
-					$this->authorized = true;
-
-				}else{
-					// if not an admin...
-					// check for classroom membership and abort if not member
-
-					foreach($this->googleClassroomList['courses'] as $course){
-						if( $course['id'] == $adminmodel->get_setting('classroom') ){
-							//$this->authorized = true;
-						}
-					}
 				}
 
-				//if an authorized player, set some flags for the requested controller
-				if( $this->authorized ){
-					$this->access_token = $client->getAccessToken();
-					$this->authUrl = '';
-					$this->logged_in = true;
+				$this->access_token = $client->getAccessToken();
+				$this->authUrl = '';
+				$this->logged_in = true;
 
-					$userdata = $adminmodel->get_user( $this->googleUserData['email'] );
-					if( !empty( $userdata ) ){
-						$_SESSION['user'] = $userdata;
-					}else{
-						$adminmodel -> add_user($this->googleUserData['email'], $this->googleUserData['name']);
-					}
+				$userdata = $adminmodel->get_user( $this->googleUserData['email'] );
 
+				if( !empty( $userdata ) ){
+					$_SESSION['user'] = $userdata;
 				}else{
-					$this->authUrl = $client->createAuthUrl();
+					$adminmodel -> add_user($this->googleUserData['email'], $this->googleUserData['name']);
 				}
 			}
 
 		}else {
 			$this->authUrl = $client->createAuthUrl();
 		}
-
 	}
-
 	public function index() {
 	}
 }
