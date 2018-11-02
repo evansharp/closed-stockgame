@@ -9,7 +9,7 @@ class Admin extends MY_Controller {
 
 	public function index() {
 
-		if( !$this->logged_in || $this->googleUserData['email'] != "evan.sharp@coastmountainacademy.ca"){
+		if( !$this->logged_in || !$this->is_admin){
 			redirect( base_url() );
 		}
 
@@ -58,7 +58,7 @@ class Admin extends MY_Controller {
 
 
 
-		$data = [ 'segments' => $stocksmodel->get_segments(),
+		$data = [ 			'segments' => $stocksmodel->get_segments(),
 							'stocks' => $stocksmodel -> get_stocks(),
 							'stock_prices' => $stocksmodel -> get_all_current_prices(),
 							'game_on' => $adminmodel -> get_setting('game_active')
@@ -66,7 +66,7 @@ class Admin extends MY_Controller {
 
 		$template_data = [
 					'title'	=> 'Admin',
-					'is_admin' => false, //don't show admin link-button
+					'is_admin' => $this->is_admin,
 					'active_nav' => '',
 					'logged_in' => $this->logged_in,
 					'login_url' => $this->authUrl,

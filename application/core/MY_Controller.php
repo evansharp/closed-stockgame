@@ -60,18 +60,19 @@ class MY_Controller extends CI_Controller {
 			// or
 			// create the auth url and store it for rendering by the next controller
 			if ( $client->getAccessToken() ) {
+				$this->access_token = $client->getAccessToken();
+				$this->authUrl = '';
+				$this->logged_in = true;
+
 				$adminmodel = new Adminmodel();
 
 				$this->googleUserData = $OAuthService->userinfo->get();
 
 				//is admin user?
-				if($this->googleUserData['email'] == "evan.sharp@coastmountainacademy.ca" || $this->googleUserData['email'] == "ego@evansharp.ca"){
+				if(	$this->googleUserData['email'] == "evan.sharp@coastmountainacademy.ca" ||
+					$this->googleUserData['email'] == "ego@evansharp.ca"){
 					$this->is_admin = true;
 				}
-
-				$this->access_token = $client->getAccessToken();
-				$this->authUrl = '';
-				$this->logged_in = true;
 
 				$userdata = $adminmodel->get_user( $this->googleUserData['email'] );
 
