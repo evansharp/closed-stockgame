@@ -50,7 +50,7 @@ class Portfolio extends MY_Controller {
 							];
 		}
 		$template_data = [
-					'title'	=> 'Your Portfolio',
+					'title'	=> 'My Portfolio',
 					'is_admin' => $this->is_admin,
 					'active_nav' => 'portfolio',
 					'logged_in' => $this->logged_in,

@@ -3,9 +3,9 @@
 <div class="pure-g">
 
 	<div class="pure-u-1">
-		<h2>Current Stock Prices</h2>
+		<h3>Current Market Prices</h3>
 		<?php for($i = 0; $i < count($stocks); $i++): ?>
-		
+
 		<table class="pure-table center">
 			<thead>
 				<tr>
@@ -16,7 +16,7 @@
 			</thead>
 			<tbody>
 				<tr>
-					
+
 				<?php foreach($stocks[$i] as $stock){
 						foreach($stock_prices[$i] as $price){
 							if($price['stock_id'] == $stock['stock_id']){
@@ -27,12 +27,17 @@
 				</tr>
 			</tbody>
 		</table>
-		
+
 		<?php endfor; ?>
 	</div>
-	
+
 	<div class="pure-u-1">
-		<p>Your Current Bank Balance is: $ <?php echo number_format($bank_balance,2); ?>
+		<h3>Currently For Sale</h3>
+		...
+	</div>
+
+	<div class="pure-u-1">
+		<p>Your cash balance is: $ <?php echo number_format($bank_balance,2); ?>
 		<?php if($result[0] == 'err'):?>
 		<span id="buysell_error" class="tx_result"><?php echo $result[1];?></span>
 		<?php elseif($result[0] == 'suc'):?>
@@ -40,7 +45,7 @@
 		<?php endif; ?>
 		</p>
 	</div>
-	
+
 	<div class="pure-u-1-2">
 		<h2>Buy Stocks</h2>
 		<div class="pure-g">
@@ -60,12 +65,12 @@
 				<div class="pure-1-3">
 					<button type="submit" class="pure-button-primary">Buy</button>
 				</div>
-				
-				
+
+
 			</form>
 		</div>
 	</div>
-	
+
 	<div class="pure-u-1-2">
 		<h2>Sell Stocks</h2>
 		<div class="pure-g">
@@ -75,7 +80,7 @@
 				</div>
 				<div class="pure-u-1-3">
 					<select name="sell_which_stock">
-						<?php 
+						<?php
 										foreach($portfolio_stocks as $stock){
 											echo "<option value='".$stock['stock_id']."'>" . $stock['code'] . " (" . $stock['num_owned'] . ")</option>";
 										}
@@ -85,8 +90,8 @@
 				<div class="pure-1-3">
 					<button type="submit" class="pure-button-primary">Sell</button>
 				</div>
-				
-				
+
+
 			</form>
 		</div>
 	</div>
