@@ -40,22 +40,29 @@
 <table class="pure-table">
 			<thead>
 				<tr>
-					<td>Id</td>
-					<td>Name</td>
-					<td>Action</td>
+					<th>Id</th>
+					<th>Name</th>
+					<th>Volitility Coefficient</th>
+					<th colspan="2">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php foreach($segments as $seg): ?>
 					<tr>
 						<form action="<?php echo base_url() . 'admin'; ?>" method="post">
+						<input type="hidden" name="edit_segment_id" value="<?php echo $seg['segment_id'];?>">
 						<td><?php echo $seg['segment_id'];?></td>
-						<td><?php echo $seg['segment_name'];?></td>
+						<td><input type="text" name="edit_segment_name" value="<?php echo $seg['segment_name'];?>"></td>
+						<td><input type="text" name="edit_segment_vol" value="<?php echo $seg['segment_volitility'];?>"></td>
+						<td><button type="submit">Save Changes</button></td>
+						</form>
 						<td>
+							<form action="<?php echo base_url() . 'admin'; ?>" method="post">
 							<input type="hidden" name="delete_segment_id" value="<?php echo $seg['segment_id'];?>">
 							<button type="submit">Delete</button>
+							</form>
 						</td>
-						</form>
+
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -138,7 +145,7 @@
 
 <div class="pure-g">
 	<form action="<?php echo base_url() . 'admin'; ?>" method="post">
-	
+
 	<div class="pure-u-1-3">
 		<input type="radio" name="set_setting_game_on" value="yes" <?php if($game_on == "yes"){ echo "checked"; }?>> Online<br>
   	<input type="radio" name="set_setting_game_on" value="no" <?php if($game_on == "no"){ echo "checked"; }?>> Offline<br>

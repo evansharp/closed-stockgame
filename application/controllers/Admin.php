@@ -42,6 +42,9 @@ class Admin extends MY_Controller {
 			if( isset($_POST['delete_segment_id']) && !empty($_POST['delete_segment_id']) ){
 				$stocksmodel -> delete_segment( $_POST['delete_segment_id'] );
 			}
+			if( isset($_POST['edit_segment_id']) && !empty($_POST['edit_segment_id']) ){
+				$stocksmodel -> edit_segment( $_POST['edit_segment_id'], $_POST['edit_segment_name'], $_POST['edit_segment_vol'] );
+			}
 
 			// settings
 

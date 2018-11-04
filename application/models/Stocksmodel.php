@@ -176,12 +176,19 @@ class Stocksmodel extends MY_Model {
         }
         return array();
     }
-    function add_segment($name){
-        $data = ['segment_name' => $name];
+    function add_segment($name, $vol){
+        $data = ['segment_name' => $name,
+                'segment_volitility' => $vol];
         $this->db->insert($this->segments_table,$data);
     }
     function delete_segment( $id ){
         $this->db->delete($this->segments_table, array('segment_id' => $id));
+    }
+    function edit_segment( $id, $name, $vol ){
+        $this->db->set('segment_name', $name);
+        $this->db->set('segment_volitility', $vol);
+        $this->db->where('segment_id', $id);
+        $this->db->update( $this->segments_table );
     }
 
 
