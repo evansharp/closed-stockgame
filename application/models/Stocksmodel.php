@@ -83,7 +83,8 @@ class Stocksmodel extends MY_Model {
 			                   'stock_id' => $id,
 			                   'timestamp' => $now,
 			                   'tx_price' => $price,
-			                   'tx' => $num
+			                   'tx' => $num,
+                               'buying_selling' => DB_BUYING
 			             ];
 			    $this->db->insert($this->history_table, $txdata);
 
@@ -139,7 +140,9 @@ class Stocksmodel extends MY_Model {
                                 'stock_id' => $id,
                                 'timestamp' => $now,
                                 'tx_price' => $price,
-                                'tx' => ($num * -1) ];
+                                'tx' => ($num * -1),
+                                'buying_selling' => DB_SELLING 
+                            ];
     			    $this->db->insert($this->history_table, $txdata);
 
     			    //record portfolio in history
