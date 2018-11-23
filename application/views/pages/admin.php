@@ -3,7 +3,7 @@
 	<table class="pure-table">
 		<thead>
 			<tr>
-
+				<th></th>
 				<?php foreach($stocks as $stock){
 					echo "<td>" . $stock['code'] . "</td>";
 				}?>
@@ -11,7 +11,7 @@
 		</thead>
 		<tbody>
 			<tr>
-
+				<th>Current Market Price</th>
 			<?php foreach($stocks as $stock){
 					foreach($stock_prices as $price){
 						if($price['stock_id'] == $stock['stock_id']){
@@ -21,7 +21,13 @@
 				}?>
 			</tr>
 			<tr>
-
+				<th>Market Cap</th>
+			<?php foreach($stocks as $stock){
+					echo "<td> ". $stock['num_shares'] ." / " . $stock['total_shares'] . "</td>";
+				}?>
+			</tr>
+			<tr>
+				<th>Price Adjust</th>
 				<?php foreach($stocks as $stock){
 					echo '<td>
 								<input type="hidden" name="update_stock_price['. $stock['code'] .'][id]" value="'. $stock['stock_id'].'">
@@ -116,7 +122,8 @@
 			endforeach; ?>
 		</select>
 	</div>
-	<div class="pure-u-1-4"><input type="text" name ="add_stock_initprice" placeholder="IPO"></div>
+	<div class="pure-u-1-8"><input type="text" name ="add_stock_initnumshares" placeholder="# of Shares"></div>
+	<div class="pure-u-1-8"><input type="text" name ="add_stock_initprice" placeholder="IPO"></div>
 
 	<div class="pure-u-1"><button type="submit"> Create Stock</button></div>
 	</form>

@@ -141,7 +141,7 @@ class Stocksmodel extends MY_Model {
                                 'timestamp' => $now,
                                 'tx_price' => $price,
                                 'tx' => ($num * -1),
-                                'buying_selling' => DB_SELLING 
+                                'buying_selling' => DB_SELLING
                             ];
     			    $this->db->insert($this->history_table, $txdata);
 
@@ -290,6 +290,7 @@ class Stocksmodel extends MY_Model {
         $this->db->select('*');
         $this->db->from( $this->stocks_table );
         $this->db->join($this->segments_table, $this->segments_table. '.segment_id = '. $this->stocks_table . '.segment_id' );
+        $this->db->join($this->market_table, $this->market_table. '.stock_id = '. $this->stocks_table . '.stock_id' );
         $q = $this->db->get( );
 
         if($q->num_rows() > 0){
@@ -311,14 +312,18 @@ class Stocksmodel extends MY_Model {
         return '';
     }
 
-    function add_stock($name, $code, $seg_id, $initprice){
-        $data1 = ['name' => $name, 'code' => $code, 'segment_id' => $seg_id];
-        $this->db->insert($this->stocks_table,$data1);
+    function add_stock($name, $code, $seg_id, $initprice, $initnumshares){
+        $data1 = ['name' => $name, 'code' => $code, 'segment_id' => $seg_id, 'total_shares' => $initnumshares];
+        $this->db->insert($this->stocks_table, $data1);
 
         $newstock_id = $this->db->insert_id();
-        $data2 = ['stock_id' => $newstock_id, 'price' => $initprice];
 
-        $this->db->insert($this->ticker_table,$data2);
+        $data2 = ['stock_id' => $newstock_id, 'price' => $initprice];
+        $this->db->insert($this->ticker_table, $data2);
+
+        $data3 = ['stock_id' => $newstock_id, 'num_shares' => $initnumshares];
+        $this->db->insert($this->market_table, $data3);
+
     }
     function delete_stock( $id ){
         $this->db->delete($this->stocks_table, array('stock_id' => $id));

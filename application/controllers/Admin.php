@@ -26,8 +26,9 @@ class Admin extends MY_Controller {
 			if( isset($_POST['add_stock_name']) && !empty($_POST['add_stock_name'])
 					&& isset($_POST['add_stock_code']) && !empty($_POST['add_stock_code'])
 					&& isset($_POST['add_stock_segment']) && !empty($_POST['add_stock_segment'])
-					&& isset($_POST['add_stock_initprice']) && !empty($_POST['add_stock_initprice'])){
-				$stocksmodel -> add_stock( $_POST['add_stock_name'], $_POST['add_stock_code'], $_POST['add_stock_segment'], $_POST['add_stock_initprice']);
+					&& isset($_POST['add_stock_initprice']) && !empty($_POST['add_stock_initprice'])
+					&& isset($_POST['add_stock_initnumshares']) && !empty($_POST['add_stock_initnumshares'])){
+				$stocksmodel -> add_stock( $_POST['add_stock_name'], $_POST['add_stock_code'], $_POST['add_stock_segment'], $_POST['add_stock_initprice'], $_POST['add_stock_initnumshares']);
 			}
 			if(isset($_POST['edit_prospectus_text']) && !empty($_POST['edit_prospectus_text']) ){
 				$stocksmodel->update_prospectus( $_POST['edit_prospectus_stock'], $_POST['edit_prospectus_text'] );
