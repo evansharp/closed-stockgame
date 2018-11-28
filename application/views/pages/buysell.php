@@ -9,6 +9,7 @@
 		<table class="pure-table center">
 			<thead>
 				<tr>
+					<th></th>
 					<?php foreach($stocks[$i] as $stock){
 						echo "<td>" . $stock['code'] . "</td>";
 					}?>
@@ -16,7 +17,7 @@
 			</thead>
 			<tbody>
 				<tr>
-
+					<th>Current Market Price</th>
 				<?php foreach($stocks[$i] as $stock){
 						foreach($stock_prices[$i] as $price){
 							if($price['stock_id'] == $stock['stock_id']){
@@ -25,15 +26,16 @@
 						}
 					}?>
 				</tr>
+				<tr>
+					<th>For Sale</th>
+				<?php foreach($stocks[$i] as $stock){
+						echo "<td> ". $stock['num_shares'] ." / " . $stock['total_shares'] . "</td>";
+					}?>
+				</tr>
 			</tbody>
 		</table>
 
 		<?php endfor; ?>
-	</div>
-
-	<div class="pure-u-1">
-		<h3>Currently For Sale</h3>
-		...
 	</div>
 
 	<div class="pure-u-1">
