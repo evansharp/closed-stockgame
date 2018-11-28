@@ -15,16 +15,16 @@ class Stocksmodel extends MY_Model {
         $this->db->from($this->ticker_table);
         $this->db->join($this->stocks_table, $this->stocks_table. '.stock_id = '. $this->ticker_table . '.stock_id' );
         $this->db->join($this->segments_table, $this->segments_table. '.segment_id = '. $this->stocks_table . '.segment_id' );
+        $this->db->where($this->ticker_table.'.timestamp > NOW() - INTERVAL 1 WEEK', null, false);
         $this->db->order_by($this->ticker_table.'.stock_id', 'ASC'); //sort into stock groupings
         $this->db->order_by('timestamp', 'ASC'); //draw graphs oldest-to-newest data
-
 
         $q = $this->db->get();
 
         if($q->num_rows() > 0){
             return $q->result_array();
         }
-        return array();
+        return [];
     }
 
     function get_update_times(){
