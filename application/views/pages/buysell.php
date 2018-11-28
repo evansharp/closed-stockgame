@@ -59,7 +59,9 @@
 					<select name="buy_which_stock">
 						<?php for($i = 0; $i < count($stocks); $i++){
 										foreach($stocks[$i] as $stock){
-											echo "<option value='".$stock['stock_id']."'>" . $stock['code'] . "</option>";
+											if($stock['num_shares'] > 0){
+												echo "<option value='".$stock['stock_id']."'>" . $stock['code'] . "</option>";
+											}
 										}
 						}?>
 					</select>

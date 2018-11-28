@@ -59,7 +59,21 @@ class Stocksmodel extends MY_Model {
 		    $user_id = $_SESSION['user']['id'];
 		    $bank = $_SESSION['user']['bank_balance'];
 		    $portfolio = json_decode($_SESSION['user']['portfolio'], true);
-		    $price = $this->get_current_price( $id );
+
+            $price = $this->get_current_price( $id );
+            $available = $this->get_available_shares( $id );
+
+            // filter out impossible situations
+            if( (float)$price < 0.01 ){
+                return ['err','Company is out of business.'];
+            }elseif( $available < 1){
+                return ['err','There are no shares of that company on the market.'];
+            }
+
+            // check that there are enough shares
+            if( $num > $available ){
+                return ['err','There are not enough shares on the market for that trade.'];
+            }
 
 		    $necessary_cash = (float)$price * $num;
 
@@ -72,7 +86,13 @@ class Stocksmodel extends MY_Model {
 		        $_SESSION['user']['bank_balance'] = $new_balance;
 
 		        //give stocks
-		        $portfolio[ $id ] = (int)$portfolio[ $id ] + $num;
+                if( isset($portfolio[ $id ]) ){
+                    //first time buy? means index doesn;t exist
+                    $portfolio[ $id ] =  (int)$portfolio[ $id ] + $num;
+                } else{
+                    $portfolio[ $id ] = $num;
+                }
+
 			    $this->db->set( 'portfolio', json_encode( $portfolio ) );
 			    $this->db->set('bank_balance', $new_balance);
 			    $this->db->where('email', $user_email);
@@ -87,6 +107,11 @@ class Stocksmodel extends MY_Model {
                                'buying_selling' => DB_BUYING
 			             ];
 			    $this->db->insert($this->history_table, $txdata);
+
+                //adjust market avaialbility
+                $this->db->set('num_shares', $available - $num);
+			    $this->db->where('stock_id', $id);
+			    $this->db->update($this->market_table);
 
 			    //record portfolio in history
 			    $q = $this->db->get_where( $this->users_table, ['id' => $user_id] );
@@ -104,7 +129,7 @@ class Stocksmodel extends MY_Model {
 
 			    return ['suc', '+'.$num.' '.$this->get_code($id)];
 		    }else{
-		        return ['err','You have insufficent funds for that transaction'];
+		        return ['err','You have insufficent funds for that trade'];
 		    }
 		}
 
@@ -114,6 +139,7 @@ class Stocksmodel extends MY_Model {
 		    $bank = $_SESSION['user']['bank_balance'];
 		    $portfolio = json_decode($_SESSION['user']['portfolio'], true);
 		    $price = $this->get_current_price( $id );
+            $available = $this->get_available_shares( $id );
 
 		    if( array_key_exists($id, $portfolio) ){
     		    $necessary_stock = $portfolio[$id];
@@ -145,6 +171,11 @@ class Stocksmodel extends MY_Model {
                             ];
     			    $this->db->insert($this->history_table, $txdata);
 
+                    //adjust market avaialbility
+                    $this->db->set('num_shares', $available + $num);
+    			    $this->db->where('stock_id', $id);
+    			    $this->db->update($this->market_table);
+
     			    //record portfolio in history
     			    $q = $this->db->get_where( $this->users_table, ['id' => $user_id] );
                     if($q->num_rows() > 0){
@@ -160,7 +191,7 @@ class Stocksmodel extends MY_Model {
 
     		        return ['suc', '+ $'. $profit];
     		    }else{
-    		        return ['err', 'You have insufficent stock for that transaction'];
+    		        return ['err', 'You have insufficent stock for that trade'];
     		    }
 		    }else{
 		        return ['err',"You don't own any of that stock"];
@@ -282,6 +313,20 @@ class Stocksmodel extends MY_Model {
         if($q->num_rows() > 0){
             $r = $q->result_array();
             return $r[0]['price'];
+        }
+        return null;
+    }
+
+    function get_available_shares( $stock_id ){
+        $this->db->select('num_shares');
+        $this->db->from( $this->market_table );
+        $this->db->where( 'stock_id', $stock_id );
+        $this->db->limit( 1 );
+        $q = $this->db->get();
+
+        if($q->num_rows() > 0){
+            $r = $q->result_array();
+            return $r[0]['num_shares'];
         }
         return null;
     }
