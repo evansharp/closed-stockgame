@@ -336,6 +336,7 @@ class Stocksmodel extends MY_Model {
         $this->db->from( $this->stocks_table );
         $this->db->join($this->segments_table, $this->segments_table. '.segment_id = '. $this->stocks_table . '.segment_id' );
         $this->db->join($this->market_table, $this->market_table. '.stock_id = '. $this->stocks_table . '.stock_id' );
+        $this->db->join($this->ticker_table, $this->ticker_table. '.stock_id = '. $this->stocks_table . '.stock_id'  );
         $q = $this->db->get( );
 
         if($q->num_rows() > 0){
