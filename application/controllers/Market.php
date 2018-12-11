@@ -27,13 +27,14 @@ class Market extends MY_Controller {
 
 
 			foreach($stocks as $stock){
+				$volco = $stock['segment_volitility'];
+				$old_price = 0;
+
 				foreach($prices as $price){
 					if($price['stock_id'] == $stock['stock_id']){
-							$current_price = $price['price'];
+							$old_price = $price['price'];
 					}
 				}
-				$volco = $stock['segment_volitility'];
-				$percent_free = $stock['num_shares'] / $stock['total_shares'];
 
 				//calculate new price
 				$new_price = act_of_god( $volco, $old_price );
