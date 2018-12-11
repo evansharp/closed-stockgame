@@ -26,5 +26,8 @@ class MY_Model extends CI_Model {
 		if( !defined( 'DB_UPDATE' ) ){
 			define('DB_UPDATE', '2');
 		}
+		if( !defined( 'UPDATES_LIMIT' ) ){
+			define('UPDATES_LIMIT', 20);
+		}
 	}
 }

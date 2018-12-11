@@ -2,9 +2,9 @@
 
 <div class="pure-g">
 	<div class="pure-u-1">
-		<div class="ct-chart ct-major-tenth" id="portfolio_chart"></div>	
+		<div class="ct-chart ct-major-tenth" id="portfolio_chart"></div>
 	</div>
-	
+
 	<div class="pure-u-1-4">
 		<p class="center legend bank_legend">Bank Balance: <b>$ <?php echo number_format($bank_value,2); ?></b></p>
 	</div>
@@ -14,11 +14,11 @@
 	<div class="pure-u-1-4">
 		<p class="center legend total_legend">Net Worth: <b>$ <?php echo number_format($total_value,2); ?></b></p>
 	</div>
-	
+
 	<div class="pure-u-1-4">
 		<p class="center legend">Number of Trades: <b><?php echo $trade_count; ?></b></p>
 	</div>
-	
+
 	<div class="pure-u-3-5">
 		<table class="pure-table stocks_table">
 			<thead>
@@ -41,30 +41,34 @@
 					echo "</tr>";
 				}?>
 			</tbody>
-		</table>	
+		</table>
 	</div>
 	<div class="pure-u-2-5">
 		<h3 class="center">Value Breakdown</h3>
 		<div class="ct-chart ct-perfect-fourth" id="portfolio_segments_chart"></div>
 	</div>
-	
+
 </div><!-- end page grid -->
 
 <!--
 <pre>
 	<?php
+	echo "update series<br>";
+	var_dump( $updates_series ); ?>
+	<hr>
+	<?php
 	echo "bank series<br>";
 	var_dump( $bank_series ); ?>
 	<hr>
-	<?php 
+	<?php
 	echo "portfolio series<br>";
 	var_dump( $portfolio_series ); ?>
 	<hr>
-	<?php 
+	<?php
 	echo "total series<br>";
 	var_dump( $total_series ); ?>
 	<hr>
-	<?php 
+	<?php
 	echo "portfolio obj<br>";
 	var_dump( $portfolio ); ?>
 </pre>
@@ -76,5 +80,5 @@
 	var total_series = <?php echo json_encode($total_series); ?>;
 	var portfolio = <?php echo json_encode($portfolio); ?>;
 	var updates_series = <?php echo json_encode($updates_series); ?>;
-	var game_start = <?php echo $game_start; ?>;
+	var game_start = "<?php echo $game_start; ?>";
 </script>

@@ -6,7 +6,7 @@ class Historymodel extends MY_Model {
         parent::__construct();
     }
 
-    function get_num_trades($user_id){
+    function get_num_trades( $user_id ){
         $q = $this->db->get_where($this->history_table, ['user_id' => $user_id]);
         if($q->num_rows() > 0){
             return count( $q->result_array() );
@@ -16,17 +16,27 @@ class Historymodel extends MY_Model {
     }
 
     function get_tx_hist( $user_id ){
-       $q = $this->db->get_where($this->history_table, ['user_id' => $user_id]);
-       if($q->num_rows() > 0){
+        $this->db->select('*');
+        $this->db->where('user_id', $user_id);
+        $this->db->order_by("id", "desc");
+        $this->db->limit(UPDATES_LIMIT);
+        $q = $this->db->get($this->history_table);
+
+        if($q->num_rows() > 0){
             return $q->result_array();
         }
         return array();
     }
 
     function get_portfolio_hist( $user_id ){
-        $q = $this->db->get_where($this->portfolio_history_table, ['user_id' => $user_id]);
+        $this->db->select('*');
+        $this->db->where('user_id', $user_id);
+        $this->db->order_by("timestamp", "desc");
+        $this->db->limit(UPDATES_LIMIT);
+        $q = $this->db->get($this->portfolio_history_table);
+
        if($q->num_rows() > 0){
-            return $q->result_array();
+            return array_reverse( $q->result_array() );
         }
         return array();
     }

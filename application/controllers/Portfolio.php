@@ -130,7 +130,7 @@ class Portfolio extends MY_Controller {
 			$update_ts = $snapshot['timestamp'];
 			$flag = false;
 			$temp_val = 0;
-			$log = '';
+			$log = [];
 
 			if(!empty($snapshot['portfolio'])){
 
@@ -143,7 +143,7 @@ class Portfolio extends MY_Controller {
 
 								//$portfolio_value += $sxdatum['price'] * $stock_num_owned;
 								$temp_val += $sxdatum['price'] * $stock_num_owned;
-								$log = "market update" . $snapshot['portfolio'];
+								$log[] = "market update" . $snapshot['portfolio'];
 
 							}
 
@@ -194,60 +194,6 @@ class Portfolio extends MY_Controller {
 	}
 
 	function prepare_total_series( $portfolio_series, $bank_series ){
-		// $game_start = $this->historymodel->get_game_start();
-		// $updates = $this->historymodel->get_portfolio_hist( $user_id );
-		// $sxdata = $this->stocksmodel->get_all_ticker();
-		// $txs = $this->historymodel->get_tx_hist( $user_id );
-		// $portfolio_value = 0;
-		// $action = '';
-
-		// foreach($updates as $snapshot){
-		// 	$sum = 0;
-		// 	$portfolio_value = 0;
-
-		// 	$update_ts = $snapshot['timestamp'];
-		// 	$bank = $snapshot['bank_balance'];
-
-		// 	if(!empty($snapshot['portfolio'])){
-
-		// 		//is this portfolio update due to a market update?
-		// 		foreach($sxdata as $sxdatum){
-		// 			if($update_ts == $sxdatum['timestamp']){
-
-		// 				foreach(json_decode($snapshot['portfolio']) as $stock_id => $stock_num_owned){
-		// 					if( $stock_id == $sxdatum['stock_id'] ){
-
-		// 						$portfolio_value += $sxdatum['price'] * $stock_num_owned;
-
-		// 						$action = "market update";
-
-		// 					}
-
-		// 				}
-
-		// 			}
-		// 		}
-
-		// 		//is this portfolio update due to a transaction?
-		// 		foreach($txs as $tx){
-		// 			if($update_ts == $tx['timestamp']){
-
-		// 				$portfolio_arr = json_decode( $snapshot['portfolio'] );
-
-		// 				foreach($portfolio_arr as $stock_id => $stock_num_owned){
-		// 					if( $stock_id == $tx['stock_id'] ){
-
-		// 						$portfolio_value += $tx['tx_price'] * $stock_num_owned;
-
-		// 						$action = "buy-sell";
-
-		// 					}
-		// 				}
-
-		// 			}
-		// 		}
-		// 	}
-
 		$series = [];
 		foreach($portfolio_series as $i => $val){
 

@@ -17,12 +17,13 @@ class Stocksmodel extends MY_Model {
         $this->db->join($this->segments_table, $this->segments_table. '.segment_id = '. $this->stocks_table . '.segment_id' );
         $this->db->where($this->ticker_table.'.timestamp > NOW() - INTERVAL 1 WEEK', null, false);
         $this->db->order_by($this->ticker_table.'.stock_id', 'ASC'); //sort into stock groupings
-        $this->db->order_by('timestamp', 'ASC'); //draw graphs oldest-to-newest data
+        $this->db->order_by('timestamp', 'desc'); //draw graphs newest-to-limit data
+        $this->db->limit(UPDATES_LIMIT); //limit to just the last 50 ticks
 
         $q = $this->db->get();
 
         if($q->num_rows() > 0){
-            return $q->result_array();
+            return array_reverse( $q->result_array() );
         }
         return [];
     }
@@ -30,6 +31,7 @@ class Stocksmodel extends MY_Model {
     function get_update_times(){
         $this->db->select('stock_id, timestamp');
         $this->db->from($this->ticker_table);
+        $this->db->limit(UPDATES_LIMIT); //limit to just the last 50 ticks
         $q = $this->db->get();
 
         if($q->num_rows() > 0){

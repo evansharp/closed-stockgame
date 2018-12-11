@@ -73,7 +73,7 @@
 
 		<script src="<?php echo base_url(); ?>js/main.js?<?php echo time();?>"></script>
 		<script src="<?php echo base_url(); ?>js/tickers.js?<?php echo time();?>"></script>
-		<script src="<?php echo base_url(); ?>js/portfolio.js?<?php //echo time();?>"></script>
+		<script src="<?php echo base_url(); ?>js/portfolio.js?<?php echo time();?>"></script>
     </body>
 
 </html>
