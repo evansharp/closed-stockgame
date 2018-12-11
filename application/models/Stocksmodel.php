@@ -237,7 +237,8 @@ class Stocksmodel extends MY_Model {
             $data = [
                     'stock_id' => $update['id'],
                     'price'    => $update['price'],
-                    'timestamp' => $now
+                    'timestamp' => $now,
+                    'buying_selling' => DB_UPDATE
                     ];
             $this->db->insert($this->ticker_table, $data);
         }

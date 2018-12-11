@@ -15,37 +15,40 @@ class Market extends MY_Controller {
 
 	public function gameTick(){
 		// calculate a change for all stock prices based on
-		// their segment volitility coefficeient and an random number
+		// their segment volitility coefficeient
 
 		// first make sure this IS our server's cron job calling...
 		// key is md5 hash of "go"
 		if( $_GET['key'] == '34d1f91fb2e514b8576fab1a75a89a6b' ){
 
+			//ensure gameticks are happeneing with db counter
+			$tmp = $this->ad->get_setting( 'test' );
+			$this->ad->set_setting( 'test', $tmp + 1 );
+
 			$stocks = $this->sm->get_stocks();
 			$prices = $this->sm->get_all_current_prices();
 			$updates = [];
-
 
 			foreach($stocks as $stock){
 				$volco = $stock['segment_volitility'];
 				$old_price = 0;
 
 				foreach($prices as $price){
-					if($price['stock_id'] == $stock['stock_id']){
-							$old_price = $price['price'];
+					if( $price['stock_id'] == $stock['stock_id'] ){
+						$old_price = $price['price'];
 					}
 				}
 
 				//calculate new price
-				$new_price = act_of_god( $volco, $old_price );
+				$new_price = $this->act_of_god( $volco, $old_price );
 
 				//build array of new prices for stock model update
-				$updates[] = ['stock_id' => $stock_id, 'price' => $new_price];
+				$updates[] = ['id' => $stock['stock_id'], 'price' => $new_price];
 			}
 
 			//write new prices to database
-			$this->sm->update_stocks($new_prices);
-
+			$this->sm->update_stocks( $updates );
+			return "done";
 		}else{
 			return false;
 		}
@@ -53,19 +56,15 @@ class Market extends MY_Controller {
 
 	private function act_of_god( $volco, $old_price){
 		//volco is someshere between 0.01 and 1
-		// 0.1 is barely any chance to change and
+		// 0.1 is barely any chance to change while 1 is quite certain
+		$calc = 0;
 
-
-		if ( ( rand(1, 100) ) /50 > $volco){
-
-			return $old_price * (1 + ( rand(1, 100) / 1000 ) * $volco + ($volco/100) );
-
+		if ( ( rand(1, 100) /50 ) > $volco ){
+			$calc = $old_price * (1 + ( rand(1, 100) / 1000 ) * $volco + ($volco/100) );
 		}else{
-
-    		return $old_price * (1 + ( rand(1, 100) / 1000 ) * $volco );
-
+    		$calc = $old_price * (1 + ( rand(1, 100) / 1000 ) * $volco );
 		}
+		return floor($calc * 100) / 100;
 	}
-
 
 }

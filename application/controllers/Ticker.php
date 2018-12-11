@@ -34,8 +34,7 @@ class Ticker extends MY_Controller {
 		$data = [
 						'ticker_all' => $per_stock,
 						'ticker_segments' => $per_segment,
-						'user' => $this->googleUserData,
-						'test' => $stocksmodel->get_stocks()
+						'user' => $this->googleUserData
 						];
 
 		$template_data = [

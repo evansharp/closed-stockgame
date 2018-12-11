@@ -23,5 +23,8 @@ class MY_Model extends CI_Model {
 		if( !defined( 'DB_SELLING' ) ){
 			define('DB_SELLING', '0');
 		}
+		if( !defined( 'DB_UPDATE' ) ){
+			define('DB_UPDATE', '2');
+		}
 	}
 }

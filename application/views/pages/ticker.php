@@ -1,8 +1,5 @@
 <h1>Tickers</h1>
 
-	<pre>
-		<?php var_dump($test); ?>
-	</pre>
 <div class="pure-g">
 	<div class="pure-u-1">
 		<div class="ct-chart ct-major-tenth" id="chart_ticker_all"></div>
@@ -26,6 +23,7 @@
 <script>
 	//pass data sets from php to js for chart-drawing with Chartist
 	var ticker_all = <?php echo json_encode($ticker_all); ?>;
+	console.log(ticker_all);
 
 	var ticker_segments = [];
 	<?php foreach($ticker_segments as $seg): ?>

@@ -72,7 +72,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
 
 		<script src="<?php echo base_url(); ?>js/main.js?<?php echo time();?>"></script>
-		<script src="<?php echo base_url(); ?>js/tickers.js?<?php //echo time();?>"></script>
+		<script src="<?php echo base_url(); ?>js/tickers.js?<?php echo time();?>"></script>
 		<script src="<?php echo base_url(); ?>js/portfolio.js?<?php //echo time();?>"></script>
     </body>
 
