@@ -47,7 +47,7 @@ class Market extends MY_Controller {
 				// if price goes negative. Set to 0, which will trigger 'bankrupt' logic
 				if( $new_price < 0.01 ){
 					$new_price = 0;
-					
+
 					$this->bankrupcy( $stock['stock_id'] );
 				}
 
@@ -78,17 +78,17 @@ class Market extends MY_Controller {
 
 			$calc = $old_price * (1 + ( rand(1, 100) / 1000 ) * $volco + ($volco/100) );
 
-			//debug occuraunces with DB coutner
-			$tmp = $this->ad->get_setting( 'stock_should_up' );
-			$this->ad->set_setting( 'stock_should_up', $tmp + 1 );
+			//debug occurances with DB coutner
+			//$tmp = $this->ad->get_setting( 'stock_should_up' );
+			//$this->ad->set_setting( 'stock_should_up', $tmp + 1 );
 
 		}else{
 			// price should go down
 			$calc = $old_price * (1 - ( rand(1, 100) / 1000 ) * $volco );
 
-			//debug occuraunces with DB coutner
-			$tmp = $this->ad->get_setting( 'stock_should_down' );
-			$this->ad->set_setting( 'stock_should_down', $tmp + 1 );
+			//debug occurances with DB coutner
+			//$tmp = $this->ad->get_setting( 'stock_should_down' );
+			//$this->ad->set_setting( 'stock_should_down', $tmp + 1 );
 		}
 
 

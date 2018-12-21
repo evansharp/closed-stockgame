@@ -23,6 +23,10 @@ class Admin extends MY_Controller {
 			if( isset($_POST['delete_stock_id']) && !empty($_POST['delete_stock_id']) ){
 				$stocksmodel -> delete_stock( $_POST['delete_stock_id'] );
 			}
+			if( isset($_POST['edit_stock_id']) && !empty($_POST['edit_stock_id'])
+		 			&& isset($_POST['edit_market_cap']) && !empty($_POST['edit_market_cap']) ){
+				$stocksmodel -> update_market_cap( $_POST['edit_stock_id'], $_POST['edit_market_cap'] );
+			}
 			if( isset($_POST['add_stock_name']) && !empty($_POST['add_stock_name'])
 					&& isset($_POST['add_stock_code']) && !empty($_POST['add_stock_code'])
 					&& isset($_POST['add_stock_segment']) && !empty($_POST['add_stock_segment'])

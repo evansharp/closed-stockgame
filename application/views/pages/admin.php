@@ -90,19 +90,31 @@
 					<td>Id</td>
 					<td>Name</td>
 					<td>Segment (id#)</td>
+					<td>Market Cap</td>
 					<td>Action</td>
 				</tr>
 			</thead>
 			<tbody>
 				<?php foreach($stocks as $stock): ?>
 					<tr>
-						<form action="<?php echo base_url() . 'admin'; ?>" method="post">
+
 						<td><?php echo $stock['stock_id'];?></td>
 						<td><?php echo $stock['name'];?></td>
 						<td><?php echo $stock['segment_name']?> (<?php echo $stock['segment_id'];?>)</td>
 						<td>
-							<input type="hidden" name="delete_stock_id" value="<?php echo $stock['stock_id'];?>">
-							<button type="submit">Delete</button>
+							<form action="<?php echo base_url() . 'admin'; ?>" method="post">
+							<input type="text" size="8" name="edit_market_cap" value="<?php echo $stock['total_shares'];?>"></td>
+						<td>
+
+								<input type="hidden" name="edit_stock_id" value="<?php echo $stock['stock_id'];?>">
+								<button type="submit">Save Change</button>
+							</form>
+
+							<form action="<?php echo base_url() . 'admin'; ?>" method="post">
+								<input type="hidden" name="delete_stock_id" value="<?php echo $stock['stock_id'];?>">
+								<button type="submit">Delete</button>
+							</form>
+
 						</td>
 						</form>
 					</tr>

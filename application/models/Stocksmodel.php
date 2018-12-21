@@ -284,8 +284,6 @@ class Stocksmodel extends MY_Model {
 
     function get_all_current_prices(){
         //get the most recent price of all stocks
-        // SQL from
-
 
         $q = $this->db->query("
             SELECT t1.*
@@ -334,6 +332,20 @@ class Stocksmodel extends MY_Model {
         return null;
     }
 
+    function get_cap( $stock_id ){
+        $this->db->select('total_shares');
+        $this->db->from($this->stocks_table);
+        $this->db->where( 'stock_id', $stock_id );
+        $this->db->limit( 1 );
+        $q = $this->db->get();
+
+        if($q->num_rows() > 0){
+            $r = $q->result_array();
+            return $r[0]['total_shares'];
+        }
+        return null;
+    }
+
     function get_stocks(){
         $this->db->select('*');
         $this->db->from( $this->stocks_table );
@@ -375,6 +387,26 @@ class Stocksmodel extends MY_Model {
     }
     function delete_stock( $id ){
         $this->db->delete($this->stocks_table, array('stock_id' => $id));
+    }
+
+    function update_market_cap($id, $new_cap){
+        $forsale = $this->get_available_shares( $id );
+        $old_cap = $this->get_cap( $id );
+        $delta_shares = $new_cap - $old_cap;
+        $new_available = $forsale + $delta_shares;
+        if($new_available < 0){
+            $new_available = 0;
+        }
+
+        //adjust market cap
+        $this->db->set('total_shares', $new_cap);
+        $this->db->where('stock_id', $id);
+        $this->db->update($this->stocks_table);
+
+        //adjust shares available
+        $this->db->set('num_shares', $new_available );
+        $this->db->where('stock_id', $id);
+        $this->db->update($this->market_table);
     }
 
     function reset_stocks(){
