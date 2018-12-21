@@ -54,6 +54,7 @@ class Admin extends MY_Controller {
 			}
 			if( isset($_POST['reset']) && !empty($_POST['reset']) ){
 				$adminmodel->reset_game();
+				$stocksmodel -> reset_stocks();
 				redirect('logout', 'refresh');
 			}
 

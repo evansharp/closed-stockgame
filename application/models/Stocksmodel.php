@@ -377,4 +377,14 @@ class Stocksmodel extends MY_Model {
         $this->db->delete($this->stocks_table, array('stock_id' => $id));
     }
 
+    function reset_stocks(){
+        $stocks = $this->get_stocks();
+        $data = [];
+        foreach($stocks as $k => $stock){
+            $data[$k]['id'] = $stock['stock_id'];
+            $data[$k]['price'] = 1;
+        }
+        $this->update_stocks( $data );
+    }
+
 }

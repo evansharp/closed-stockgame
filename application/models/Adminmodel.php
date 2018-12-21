@@ -53,8 +53,6 @@ class Adminmodel extends MY_Model {
         $this->db->empty_table( $this->ticker_table );
         $this->db->empty_table( $this->history_table );
         $this->db->empty_table( $this->portfolio_history_table );
-
-
     }
 
     //***************************************************
