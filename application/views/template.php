@@ -42,7 +42,7 @@
     <div id="main">
 
 			<?php
-				if ( $logged_in ){
+				if ( $logged_in || $title === "Ticker" ){
 
 					echo $page;
 
@@ -54,11 +54,6 @@
 					echo '</aside>';
 
 				}
-					//echo '<pre>';
-					//var_dump($userData);
-					//echo '<hr>';
-					//var_dump($classData);
-					//echo '</pre>';
 
 				if($is_admin){
 					echo "<a id='admin_link' class='pure-button pure-button-primary' href='admin'>ADMIN</a>";
