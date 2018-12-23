@@ -21,6 +21,7 @@ class Market extends MY_Controller {
 		// key is md5 hash of "go"
 		if( $_GET['key'] == '34d1f91fb2e514b8576fab1a75a89a6b' ){
 
+			// DEBUg
 			//ensure gameticks are happeneing with db counter
 			//$tmp = $this->ad->get_setting( 'test' );
 			//$this->ad->set_setting( 'test', $tmp + 1 );
@@ -47,7 +48,6 @@ class Market extends MY_Controller {
 				// if price goes negative. Set to 0, which will trigger 'bankrupt' logic
 				if( $new_price < 0.01 ){
 					$new_price = 0;
-
 					$this->bankrupcy( $stock['stock_id'] );
 				}
 
@@ -73,7 +73,7 @@ class Market extends MY_Controller {
 
 		$calc = 0;
 
-		if ( ( rand(1, 100) /50 ) > $volco ){
+		if ( ( rand(1, 100) /40 ) > $volco ){
 			// price should go up
 
 			$calc = $old_price * (1 + ( rand(1, 100) / 1000 ) * $volco + ($volco/100) );
