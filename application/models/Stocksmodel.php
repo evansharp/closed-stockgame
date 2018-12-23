@@ -15,10 +15,9 @@ class Stocksmodel extends MY_Model {
         $this->db->from($this->ticker_table);
         $this->db->join($this->stocks_table, $this->stocks_table. '.stock_id = '. $this->ticker_table . '.stock_id' );
         $this->db->join($this->segments_table, $this->segments_table. '.segment_id = '. $this->stocks_table . '.segment_id' );
-        $this->db->where($this->ticker_table.'.timestamp > NOW() - INTERVAL 1 WEEK', null, false);
+        $this->db->where($this->ticker_table.'.timestamp > NOW() - INTERVAL 1 DAY', null, false);
         $this->db->order_by($this->ticker_table.'.stock_id', 'ASC'); //sort into stock groupings
         $this->db->order_by('timestamp', 'desc'); //draw graphs newest-to-limit data
-        $this->db->limit(UPDATES_LIMIT); //limit to just the last 50 ticks
 
         $q = $this->db->get();
 

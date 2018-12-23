@@ -18,15 +18,18 @@ class Ticker extends MY_Controller {
 		$per_stock = [];
 
 		foreach($all_segments as $stock){
-			$per_stock[ $stock['code'] ][] = $stock;
+			if( !isset( $per_stock[ $stock['code'] ] ) || count( $per_stock[ $stock['code'] ] ) < UPDATES_LIMIT ){
+				$per_stock[ $stock['code'] ][] = $stock;
+			}
 		}
 
 		//loop through and split out the per-segment data for those charts
 		$per_segment = [];
 
 		foreach($all_segments as $stock){
-
+			if( !isset( $per_segment[ $stock['segment_name'] ][ $stock['stock_id'] ] ) || count( $per_segment[ $stock['segment_name'] ][ $stock['stock_id'] ] ) < UPDATES_LIMIT){
 				$per_segment[ $stock['segment_name'] ][ $stock['stock_id'] ][] = $stock;
+			}
 
 		}
 
