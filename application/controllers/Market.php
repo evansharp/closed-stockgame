@@ -69,7 +69,7 @@ class Market extends MY_Controller {
 		// while 1 is 50% of the time and up to 11% changes
 
 		// the more shares of a stock on the market, the less valuable it should be
-		// so bias the change calc using the percent of shares $available
+		// so adjust the change calc using the percent of shares currently available
 
 		$calc = 0;
 
@@ -91,6 +91,8 @@ class Market extends MY_Controller {
 			//$this->ad->set_setting( 'stock_should_down', $tmp + 1 );
 		}
 
+		//adjust based on free market cap
+		//$calc = $calc - ($free_cap / 10);
 
 		return floor($calc * 100) / 100; // return as rounded to a hundreth
 	}
