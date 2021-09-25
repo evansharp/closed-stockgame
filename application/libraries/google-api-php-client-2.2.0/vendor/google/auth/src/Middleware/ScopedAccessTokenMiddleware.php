@@ -76,7 +76,8 @@ class ScopedAccessTokenMiddleware
         $this->tokenFunc = $tokenFunc;
         if (!(is_string($scopes) || is_array($scopes))) {
             throw new \InvalidArgumentException(
-                'wants scope should be string or array');
+                'wants scope should be string or array'
+            );
         }
         $this->scopes = $scopes;
 
@@ -113,13 +114,12 @@ class ScopedAccessTokenMiddleware
      *   $client = new Client([
      *       'handler' => $stack,
      *       'base_url' => 'https://www.googleapis.com/taskqueue/v1beta2/projects/',
-     *       'auth' => 'google_auth' // authorize all requests
+     *       'auth' => 'scoped' // authorize all requests
      *   ]);
      *
      *   $res = $client->get('myproject/taskqueues/myqueue');
      *
      * @param callable $handler
-     *
      * @return \Closure
      */
     public function __invoke(callable $handler)
