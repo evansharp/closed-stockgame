@@ -1,16 +1,23 @@
-<h1>Stocks Prospectus</h1>
-<?php foreach($prospecti as $prospectus):?>
-<div class="prospectus">
-	<h3><?php echo $prospectus['name'];?> (<?php echo $prospectus['code'];?>)</h3>
-	<p><?php echo $prospectus['prospectus'];?></p>
-	<aside>Sector: <?php echo $prospectus['segment_name']?></aside>
-	
-	
+<div class="container">
+<div class="row">
+<?php foreach($prospecti as $k => $prospectus):
+	if($k % 2 == 0){
+  	echo '<div class="col-sm-6">';
+    }
+	?>
+  <div class="card prospectus left">
+      <div class="card-body">
+		  <h5 class="mb-0">
+	          <?php echo $prospectus['name'];?> (<?php echo $prospectus['code'];?>)
+		</h5>
+        <p><?php echo $prospectus['prospectus'];?></p>
+		<aside class="text-muted">Sector: <?php echo $prospectus['segment_name']?></aside>
+      </div>
+  </div>
+<?php
+  if($k % 2 != 0){
+	echo "</div>";
+  }
+ 	endforeach;?>
 </div>
-<?php endforeach;?>
-
-<!--
-<pre>
-	<?php
-	var_dump($prospecti);?>
-</pre>-->
+</div>

@@ -17,7 +17,7 @@ class Stocksmodel extends MY_Model {
         $this->db->join($this->segments_table, $this->segments_table. '.segment_id = '. $this->stocks_table . '.segment_id' );
         $this->db->where($this->ticker_table.'.timestamp > NOW() - INTERVAL 1 DAY', null, false);
         $this->db->order_by($this->ticker_table.'.stock_id', 'ASC'); //sort into stock groupings
-        $this->db->order_by('timestamp', 'desc'); //draw graphs newest-to-limit data
+        $this->db->order_by('timestamp', 'ACS'); //draw graphs newest-to-limit data
 
         $q = $this->db->get();
 
@@ -48,6 +48,20 @@ class Stocksmodel extends MY_Model {
         }
         return $updates;
 
+    }
+
+    function get_latest_update_time(){
+        $this->db->select('timestamp');
+        $this->db->from($this->ticker_table);
+        $this->db->order_by('timestamp', 'DESC');
+        $this->db->limit( 1 );
+        $q = $this->db->get();
+        if($q->num_rows() > 0){
+            $r = $q->result_array();
+            return $r[0]['timestamp'];
+        }else{
+            return null;
+        }
     }
 
 
@@ -315,6 +329,66 @@ class Stocksmodel extends MY_Model {
             return $r[0]['price'];
         }
         return null;
+    }
+
+    function get_all_current_prices_with_trend(){
+        //get the most recent price of all stocks
+        $q = $this->db->query("
+            SELECT t1.*
+            FROM `". $this->ticker_table ."` AS t1
+            LEFT OUTER JOIN `". $this->ticker_table ."` AS t2
+                ON t1.stock_id = t2.stock_id
+                AND (t1.timestamp < t2.timestamp
+                    OR (t1.timestamp = t2.timestamp AND t1.id < t2.id)
+                    )
+            WHERE t2.stock_id IS NULL
+        ");
+
+        $latest_prices = [];
+        if( $q -> num_rows() > 0 ){
+            $latest_prices = $q->result_array();
+        }
+
+        // get all next-oldest stock prices
+        // requires non-strict GROUPBY mode on the db:
+        // https://stackoverflow.com/a/41887627/267786
+        $q2 = $this->db->query("
+        SELECT t1.*, COUNT(*) AS pos
+        FROM `". $this->ticker_table ."` AS t1
+        LEFT JOIN `". $this->ticker_table ."` AS t2
+            ON t2.stock_id = t1.stock_id AND t2.timestamp >= t1.timestamp
+            GROUP BY
+            t1.stock_id, t1.timestamp
+            HAVING pos = 2;
+        ");
+
+        if( $q2 -> num_rows() > 0 ){
+            $prior_prices = $q2->result_array();
+
+            foreach ( $latest_prices as $i => $latest ) {
+                foreach( $prior_prices as $prior ){
+                    if( $prior['stock_id'] == $latest['stock_id'] ){
+                        if( $prior['price'] > $latest['price'] )
+                            // dropping
+                            $latest_prices[$i]['trend'] = "down";
+                        elseif($prior['price'] < $latest['price'] )
+                            // rising
+                            $latest_prices[$i]['trend'] = "up";
+                        else{
+                            $latest_prices[$i]['trend'] = "same";
+                        }
+                    }
+                }
+            }
+
+        }else{
+            // game is reset rn, so set 'trend' to 'same'
+            foreach($latest_prices as $i => $latest){
+                $latest_prices[$i]['trend'] = "same";
+            }
+        }
+
+        return $latest_prices;
     }
 
     function get_available_shares( $stock_id ){

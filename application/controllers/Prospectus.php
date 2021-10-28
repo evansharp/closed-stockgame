@@ -9,17 +9,17 @@ class Prospectus extends MY_Controller {
 		$this->stocksmodel = new Stocksmodel();
 	}
 
+
 	public function index(){
 
 		$data = ['prospecti' => $this->stocksmodel->get_prospecti() ];
 
 		$template_data = [
 					'title'	=> 'Prospectus',
-					'is_admin' => $this->is_admin,
 					'active_nav' => 'prospectus',
-					'logged_in' => $this->logged_in,
 					'login_url' => $this->authUrl,
-					'userData' => $this->googleUserData,
+					'userData' => $this->google_user_data,
+					'game_online' => $this->game_online,
 					'page' 	=> $this->load->view('pages/prospectus', $data ,TRUE)
 				];
 

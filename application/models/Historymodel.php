@@ -28,6 +28,17 @@ class Historymodel extends MY_Model {
         return array();
     }
 
+    function get_last_trade_time( $user_id ){
+        $this->db->order_by('timestamp', 'DESC');
+        $this->db->limit(1);
+        $q = $this->db->get_where($this->history_table, ['user_id' => $user_id]);
+        if($q->num_rows() > 0){
+            $a = $q->result_array();
+            return date('M j, g:ia', $a[0]['timestamp']);
+        }
+         return "None";
+    }
+
     function get_portfolio_hist( $user_id ){
         $this->db->select('*');
         $this->db->where('user_id', $user_id);

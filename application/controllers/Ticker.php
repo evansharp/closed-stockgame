@@ -7,46 +7,78 @@ class Ticker extends MY_Controller {
 
 	}
 
+
 	public function index() {
 
 		$stocksmodel = new Stocksmodel();
-
-		$all_segments = $stocksmodel->get_all_ticker();
-
-
+		$all_stocks = $stocksmodel->get_all_ticker();
 		//loop through and split out the per-stock data for the big chart
 		$per_stock = [];
 
-		foreach($all_segments as $stock){
-			if( !isset( $per_stock[ $stock['code'] ] ) || count( $per_stock[ $stock['code'] ] ) < UPDATES_LIMIT ){
-				$per_stock[ $stock['code'] ][] = $stock;
-			}
+		foreach($all_stocks as $stock){
+			$per_stock[ $stock['code'] ][] = $stock;
 		}
 
-		//loop through and split out the per-segment data for those charts
-		$per_segment = [];
+		//generate the two indexes and add them to the front
 
-		foreach($all_segments as $stock){
-			if( !isset( $per_segment[ $stock['segment_name'] ][ $stock['stock_id'] ] ) || count( $per_segment[ $stock['segment_name'] ][ $stock['stock_id'] ] ) < UPDATES_LIMIT){
-				$per_segment[ $stock['segment_name'] ][ $stock['stock_id'] ][] = $stock;
-			}
 
+		$per_timestamp = [];
+		foreach($all_stocks as $stock){
+			$per_timestamp[ $stock['timestamp'] ][] = $stock;
 		}
 
+		// comodities index
+		$i = 0;
+		$p = 0;
+		foreach($per_timestamp as $time){
+			$sum = 0.0;
+			$p = 0;
+			foreach($time as $stock){
+				//die("<pre>".print_r($stock, true)."</pre>");
+				if( $stock['is_comodity'] ){
+					$sum += floatval( $stock['price'] );
+					$p++;
+				}
+			}
+			$avg = round( $sum/ $p, 2 );
+			$per_stock['Index2'][$i]['price'] = $avg;
+			$per_stock['Index2'][$i]['timestamp'] = $time[0]['timestamp'];
+			$per_stock['Index2'][$i]['code'] = 'Comodities';
+			$i++;
+		}
+		array_unshift( $per_stock, array_pop( $per_stock ) );
 
-		$data = [
-						'ticker_all' => $per_stock,
-						'ticker_segments' => $per_segment,
-						'user' => $this->googleUserData
-						];
+		// Generl market index
+		$i = 0;
+		foreach($per_timestamp as $time){
+			$sum = 0.0;
+			foreach($time as $stock){
+				if( !$stock['is_comodity'] ){
+					$sum += floatval( $stock['price'] );
+				}
+			}
+			$avg = round( $sum/ count( $time ) , 2);
+			$per_stock['Index'][$i]['price'] = $avg;
+			$per_stock['Index'][$i]['timestamp'] = $time[0]['timestamp'];
+			$per_stock['Index'][$i]['code'] = 'Market Cap';
+			$i++;
+		}
+		array_unshift( $per_stock, array_pop( $per_stock ) );
+
+
+
+
+		//die("<pre>".print_r($per_timestamp, true)."</pre>");
+
+
+
+		$data = [ 'ticker_all' => $per_stock ];
 
 		$template_data = [
 					'title'	=> 'Ticker',
-					'is_admin' => $this->is_admin,
 					'active_nav' => 'ticker',
-					'logged_in' => $this->logged_in,
 					'login_url' => $this->authUrl,
-					'userData' => $this->googleUserData,
+					'game_online' => $this->game_online,
 					'page' 	=> $this->load->view('pages/ticker', $data ,TRUE)
 				];
 

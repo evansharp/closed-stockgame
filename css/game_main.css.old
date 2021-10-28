@@ -1,0 +1,130 @@
+body{
+	margin: 0;
+	padding: 0;
+}
+
+#main{
+	width: 70%;
+	margin: 20px auto;
+}
+
+h1, h2 {
+	font-family: raleway;
+	font-weight: bolder;
+}
+
+table{
+	margin: 0 auto;
+}
+
+.center{
+	text-align: center;
+}
+
+.hidden{
+	display: none;
+}
+.pure-button-primary{
+	background-color: #03C9A9 !important;
+}
+.button-red {
+  background: rgb(202, 60, 60);
+  color: #fff;
+}
+.pure-form{
+	width: 100% !important;
+}
+.pure-table{
+	margin-bottom: 20px;
+}
+#admin_link{
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	z-index: 100;
+}
+#not_logged_in{
+	width: 900px;
+	margin: 100px auto 0;
+	text-align: center;
+	font-size: 1.3em;
+}
+
+.stock_update_field{
+	width: 3.5em !important;
+	text-align: center;
+}
+#prospectus_field{
+	width: 90%;
+	height: 6em;
+	margin: 0 auto;
+}
+
+#buysell_error{
+	background: red;
+}
+#buysell_success{
+	background: green;
+}
+.tx_result{
+ 	color: white;
+	padding: 0 10px;
+	margin-left: 3em;
+
+	display: inline-block;
+	text-align: center;
+ }
+
+ .stocks_table{
+ 	margin-top: 70px;
+ }
+
+ #portfolio_chart .ct-series-c .ct-line{
+ 	  fill: none;
+    stroke-width: 4px;
+    stroke-dasharray: 5px;
+    -o-animation: dashoffset 1s linear infinite;
+    animation: dashoffset 1s linear infinite;
+ }
+
+ #portfolio_segments_chart .ct-label{
+ 	font-weight: bolder;
+ 	color: #000;
+ 	fill: #000;
+ }
+
+ .legend{
+ 	border-bottom: 4px solid #ccc;
+ }
+
+ .total_legend{
+ 	border-bottom-color: #f4c63d;
+ }
+ #portfolio_chart .ct-series-c .ct-line{ }
+
+ .portfolio_legend{
+ 	border-bottom-color: #f05b4f;
+ }
+ #portfolio_chart .ct-series-c .ct-line{ }
+
+ .bank_legend{
+ 	border-bottom-color: #26A65B;
+ }
+ #portfolio_chart .ct-series-a .ct-line,
+ #portfolio_chart .ct-series-a .ct-point{ stroke: #26A65B; }
+
+ .prospectus{
+ 	width: 90%;
+ 	max-width: 900px;
+ 	margin: 3em auto 0;
+ 	padding-bottom: 1em;
+ 	border-bottom: 1px solid #e74b3c;
+ }
+ 	.prospectus p{
+ 		width: 80%;
+ 		margin: 0 auto 0.5em;
+ 	}
+  .prospectus aside{
+  	text-align: right;
+  	font-style: italic;
+  }

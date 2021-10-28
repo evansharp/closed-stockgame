@@ -6,7 +6,6 @@ class Portfolio extends MY_Controller {
 	protected $historymodel;
 	protected $portfoliomodel;
 
-
 	public function __construct() {
 		parent::__construct();
 		$this->stocksmodel = new Stocksmodel();
@@ -16,46 +15,40 @@ class Portfolio extends MY_Controller {
 
 	public function index() {
 		$data = [];
-		if( !empty($_SESSION['user']) ){
 
-			$bank_series =  $this->prepare_bank_series( $_SESSION['user']['id'] );
-			$bank_value = 0;
-			if(!empty($bank_series)){
-				$bank_value = $bank_series[count($bank_series)-1]['y'];
-			}
+		$bank_series =  $this->prepare_bank_series( $_SESSION['user']['id'] );
+		$bank_value = $_SESSION['user']['bank_balance'];
 
-			$portfolio_series = $this->prepare_portfolio_series( $_SESSION['user']['id'] );
-			$portfolio_value = 0;
-			if(!empty($portfolio_series)){
-				$portfolio_value = $portfolio_series[count($portfolio_series)-1]['y'];
-			}
-
-			$total_series = $this->prepare_total_series( $portfolio_series, $bank_series);
-			$total_value = 0;
-			if(!empty($total_series)){
-				$total_value = $total_series[count($total_series)-1]['y'];
-			}
-
-			$data = [
-								'bank_series' => $bank_series,
-								'bank_value' => $bank_value,
-								'portfolio_series' => $portfolio_series,
-								'portfolio_value' => $portfolio_value,
-								'total_series' => $total_series,
-								'total_value' => $total_value,
-								'portfolio' => $this->prepare_portfolio($_SESSION['user']['email']),
-								'updates_series' => $this->prepare_update_times($_SESSION['user']['id']),
-								'trade_count' => $this->historymodel->get_num_trades($_SESSION['user']['id']),
-								'game_start' => $this->historymodel->get_game_start()
-							];
+		$portfolio_series = $this->prepare_portfolio_series( $_SESSION['user']['id'] );
+		$portfolio_value = 0;
+		if(!empty($portfolio_series)){
+			$portfolio_value = $portfolio_series[count($portfolio_series)-1]['y']; // last value
 		}
+
+		$total_series = $this->prepare_total_series( $portfolio_series, $bank_series);
+		$total_value = 0;
+		if(!empty($total_series)){
+			$total_value = $total_series[count($total_series)-1]['y'];
+		}
+
+		$data = [
+					'bank_series' => $bank_series,
+					'bank_value' => $bank_value,
+					'portfolio_series' => $portfolio_series,
+					'portfolio_value' => $portfolio_value,
+					'total_series' => $total_series,
+					'total_value' => $total_value,
+					'portfolio' => $this->prepare_portfolio($_SESSION['user']['email']),
+					'updates_series' => $this->prepare_update_times($_SESSION['user']['id']),
+					'trade_count' => $this->historymodel->get_num_trades($_SESSION['user']['id']),
+					'game_start' => $this->historymodel->get_game_start()
+				];
+
 		$template_data = [
 					'title'	=> 'My Portfolio',
-					'is_admin' => $this->is_admin,
 					'active_nav' => 'portfolio',
-					'logged_in' => $this->logged_in,
 					'login_url' => $this->authUrl,
-					'userData' => $this->googleUserData,
+					'game_online' => $this->game_online,
 					'page' 	=> $this->load->view('pages/portfolio', $data ,TRUE)
 				];
 
@@ -81,17 +74,16 @@ class Portfolio extends MY_Controller {
 		$updates = $this->historymodel->get_portfolio_hist( $user_id );
 		$sxdata = $this->stocksmodel->get_all_ticker();
 
+		//game start
 		// x = time, y = balance
 		$series[] = [ 'x' => $game_start, 'y' => $balance ];
-		//$series = [];
 
 		foreach($updates as $snapshot){
 			//is update due to market update?
 			$flag = true; //only once per market update
 			foreach($sxdata as $sxdatum){
 				if( $snapshot['timestamp'] == $sxdatum['timestamp'] && $flag){
-
-					$series[] = [ 'x' => $snapshot['timestamp'], 'y' => $balance ];
+					$series[] = [ 'x' => $snapshot['timestamp'], 'y' => round($balance, 2) ];
 					$flag = false; //block adding another timepoint until next update iteration
 				}
 			}
@@ -101,7 +93,7 @@ class Portfolio extends MY_Controller {
 				if( $snapshot['timestamp'] == $tx['timestamp']){
 					$transaction = $tx['tx'] * $tx['tx_price'];
 					$balance -= $transaction;
-					$series[] = [ 'x' => $tx['timestamp'], 'y' => $balance ];
+					$series[] = [ 'x' => $tx['timestamp'], 'y' => round($balance, 2) ];
 				}
 			}
 
@@ -116,11 +108,10 @@ class Portfolio extends MY_Controller {
 		$series = [];
 
 		//if game is new, init first data point and return
+		$series[] = ['x'=>$updates[0]['timestamp'], 'y'=>0];
 		if( count( $updates ) < 2 ){
-			$series[] = ['x'=>$updates[0]['timestamp'], 'y'=>0];
 			return $series;
 		}
-
 
 		$sxdata = $this->stocksmodel->get_all_ticker();
 		$txs = $this->historymodel->get_tx_hist( $user_id );
@@ -140,9 +131,7 @@ class Portfolio extends MY_Controller {
 						$flag = true;
 						foreach(json_decode($snapshot['portfolio']) as $stock_id => $stock_num_owned){
 							if( $stock_id == $sxdatum['stock_id'] ){
-
-								//$portfolio_value += $sxdatum['price'] * $stock_num_owned;
-								$temp_val += $sxdatum['price'] * $stock_num_owned;
+								$temp_val = $temp_val + ( floatval($sxdatum['price']) * floatval($stock_num_owned) );
 								$log[] = "market update" . $snapshot['portfolio'];
 
 							}
@@ -169,16 +158,12 @@ class Portfolio extends MY_Controller {
 									if( $stock_id == $tx['stock_id'] ){
 
 										$log[] = "buy ". $tx['stock_id'] ." , portfolio_value is ".  $portfolio_value . ", tx is + " . $tx['tx_price'] * $tx['tx'];
-										$portfolio_value += $tx['tx_price'] * $tx['tx'];
-
-
+										$portfolio_value = $portfolio_value + (floatval($tx['tx_price']) * floatval($tx['tx']));
 									}
-
 							}
 						}else{
 							//IS SELL
 							$log[] = "sell " . $tx['stock_id'] . ", portfolio_value is ".  $portfolio_value . ", tx is + " . $tx['tx_price'] * $tx['tx'];
-
 							$portfolio_value += $tx['tx_price'] * $tx['tx'];
 						}
 
@@ -186,8 +171,9 @@ class Portfolio extends MY_Controller {
 				}
 			}
 			$series[] = [	'x' => $snapshot['timestamp'],
-										'y' => $portfolio_value,
-										'log' => $log];
+							'y' => number_format( $portfolio_value, 2),
+							'log' => $log
+						];
 		}
 
 		return $series;
@@ -195,18 +181,26 @@ class Portfolio extends MY_Controller {
 
 	function prepare_total_series( $portfolio_series, $bank_series ){
 		$series = [];
+
 		foreach($portfolio_series as $i => $val){
 
-			$sum = $bank_series[$i]['y'] + $portfolio_series[$i]['y'];
+			// account for users not registering before first update occurs...
+			// causes mismatched datset lengths
+			// dang disengaged teenagers...
+			if( isset($portfolio_series[$i]) && isset($bank_series[$i]) ){
+				$sum = $bank_series[$i]['y'] + $portfolio_series[$i]['y'];
+			}
 
-			$series[] = [	'x' => $portfolio_series[$i]['x'],
-										'y' => $sum];
+			$series[] = [
+							'x' => $portfolio_series[$i]['x'],
+							'y' => round($sum, 2)
+						];
 		}
 		return $series;
 	}
 
 	function prepare_portfolio($user_email){
-		$portfolio = $this->portfoliomodel->get_portfolio( $user_email );
+		$portfolio = $this->portfoliomodel->get_portfolio( $_SESSION['user']['email'] );
 		$stocks = $this->stocksmodel->get_stocks();
 		$prices = $this->stocksmodel->get_all_current_prices();
 		$output = [];
@@ -219,12 +213,13 @@ class Portfolio extends MY_Controller {
 				if($stock['stock_id'] == $id){
 					foreach($prices as $price){
 						if($price['stock_id'] == $id){
-							$output[] = [	'code' => $stock['code'],
-														'segment' => $stock['segment_name'],
-														'price' => $price['price'],
-														'owned' => $num,
-														'value' => $num * $price['price']
-													];
+							$output[] = [
+											'code' => $stock['code'],
+											'segment' => $stock['segment_name'],
+											'price' => round( $price['price'], 2),
+											'owned' => intval($num),
+											'value' => round( $num * $price['price'], 2)
+										];
 						}
 					}
 				}

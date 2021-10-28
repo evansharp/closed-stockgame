@@ -10,6 +10,7 @@ class MY_Model extends CI_Model {
   	protected $settings_table = "settings";
   	protected $portfolio_history_table = "portfolio_value_history";
 	protected $market_table = "market";
+	protected $login_table = "user_logins";
 
   	protected $starting_balance = 10000;
 

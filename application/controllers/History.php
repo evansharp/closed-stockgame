@@ -6,32 +6,20 @@ class History extends MY_Controller {
 		parent::__construct();
 
 	}
+	
 
 	public function index() {
 		$this->stocksmodel = new Stocksmodel();
 		$this->historymodel = new Historymodel();
 		$this->portfoliomodel = new Portfoliomodel();
 
-		$data = [];
-
-
-		if(isset( $_SESSION['user'] ) && !empty( $_SESSION['user'] ) ){
-
-
-
-
-			$data = [
-							'history' => $this->prepare_history( $_SESSION['user']['id'] )
-							];
-		}
+		$data = [ 'history' => $this->prepare_history( $_SESSION['user']['id'] ) ];
 
 		$template_data = [
 					'title'	=> 'Trade History',
-					'is_admin' => $this->is_admin,
 					'active_nav' => 'history',
-					'logged_in' => $this->logged_in,
 					'login_url' => $this->authUrl,
-					'userData' => $this->googleUserData,
+					'game_online' => $this->game_online,
 					'page' 	=> $this->load->view('pages/history', $data ,TRUE)
 				];
 

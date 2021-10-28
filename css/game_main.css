@@ -1,16 +1,26 @@
+
 body{
 	margin: 0;
 	padding: 0;
+	min-width: 1101px;
+	font-size: 16px;
 }
 
 #main{
-	width: 70%;
-	margin: 20px auto;
+	width: 1100px;
+	margin: 0 auto;
+	padding: 20px 0;
 }
-
-h1, h2 {
-	font-family: raleway;
-	font-weight: bolder;
+h1{
+	font-size: 2em;
+	text-align: center;
+	margin-bottom: 1.5em;
+}
+h2{
+	font-size: 1.5em;
+}
+h3, h4{
+	font-size: 1.2em;
 }
 
 table{
@@ -20,6 +30,12 @@ table{
 .center{
 	text-align: center;
 }
+.float_right{
+	float: right;
+}
+.float_left{
+	float: left;
+}
 
 .hidden{
 	display: none;
@@ -27,104 +43,219 @@ table{
 .pure-button-primary{
 	background-color: #03C9A9 !important;
 }
+button + button{
+	margin-left: 5px;
+	margin-right: 5px;
+}
 .button-red {
   background: rgb(202, 60, 60);
   color: #fff;
 }
-.pure-form{
-	width: 100% !important;
-}
-.pure-table{
-	margin-bottom: 20px;
-}
+
 #admin_link{
 	position: fixed;
 	right: 0;
 	bottom: 0;
 	z-index: 100;
 }
-#not_logged_in{
-	width: 900px;
+#game_not_online_reminder{
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	z-index: 100;
+	color: #fff;
+	background-color: red;
+	padding: 8px 16px;
+}
+
+#title_splash{
+	width: 800px;
 	margin: 100px auto 0;
+	padding: 0.9em;
 	text-align: center;
 	font-size: 1.3em;
 }
 
-.stock_update_field{
-	width: 3.5em !important;
+#not_logged_in, #game_offline{
+	width: 400px;
+	margin: 50px auto 0;
+	padding: 0.5em;
 	text-align: center;
+	font-size: 0.8em;
+
+	color: #D8000C;
+	border: 1px solid #d8000c;
+	background-color: #FFBABA
+}
+
+.stock_update_field{
+	width: 5em !important;
+	float: right;
+}
+.stock_update_field:before{
+	content: "$ ";
 }
 #prospectus_field{
 	width: 90%;
 	height: 6em;
 	margin: 0 auto;
 }
-
-#buysell_error{
-	background: red;
-}
-#buysell_success{
-	background: green;
-}
 .tx_result{
- 	color: white;
-	padding: 0 10px;
-	margin-left: 3em;
-	
-	display: inline-block;
-	text-align: center;
+	margin-top: 20px;
+}
+
+ .buysell .list-group span{
+ 	float: right;
  }
- 
- .stocks_table{
- 	margin-top: 70px;
- }
- 
- #portfolio_chart .ct-series-c .ct-line{
- 	  fill: none;
-    stroke-width: 4px;
-    stroke-dasharray: 5px;
-    -o-animation: dashoffset 1s linear infinite;
-    animation: dashoffset 1s linear infinite;
- }
- 
- #portfolio_segments_chart .ct-label{
- 	font-weight: bolder;
- 	color: #000;
- 	fill: #000;
- }
- 
+
+.buysell .list-group li{
+	width: 210px;
+}
+
+.trend-up, .trend-down, .trend-same {
+	margin-left: 0.5em;
+
+}
+.trend-up{
+	color: #4F8A10;
+	transform: rotate(-90deg);
+}
+.trend-down{
+	color: #D8000C;
+	transform: rotate(90deg);
+}
+.trend-same{
+	color: #999;
+}
+#bank_hist_container, 3portfolio_chart_container{
+	margin-bottom: 15px;
+}
+.form-row + .form-row{
+	padding-top: 15px;
+}
+
  .legend{
  	border-bottom: 4px solid #ccc;
  }
- 
+
  .total_legend{
  	border-bottom-color: #f4c63d;
  }
- #portfolio_chart .ct-series-c .ct-line{ }
- 
+
+
  .portfolio_legend{
  	border-bottom-color: #f05b4f;
  }
- #portfolio_chart .ct-series-c .ct-line{ }
- 
+
+
  .bank_legend{
  	border-bottom-color: #26A65B;
  }
- #portfolio_chart .ct-series-a .ct-line,
- #portfolio_chart .ct-series-a .ct-point{ stroke: #26A65B; }
- 
- .prospectus{
- 	width: 90%;
- 	max-width: 900px;
- 	margin: 3em auto 0;
- 	padding-bottom: 1em;
- 	border-bottom: 1px solid #03C9A9;
+body.portfolio .row + body.portfolio .row{
+	margin-bottom: 15px;
+}
+body.portfolio .table, body.portfolio .table thead, body.portfolio .table th{
+	border-top: none;
+}
+
+
+ #main .prospectus{
+ 	width: 100%;
+	margin: 0.75em 0;
+ 	padding-bottom: 0.5em;
+ 	border-bottom: 1px solid #e74b3c;
  }
- 	.prospectus p{
- 		width: 80%;
- 		margin: 0 auto 0.5em;
- 	}
+
   .prospectus aside{
   	text-align: right;
-  	font-style: italic;
+
   }
+
+  span.tag{
+	font-size: 0.8em;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	background: #eee;
+	color: #333;
+	padding: 0.2em 0.4em;
+  }
+
+  span.tag_red{
+	color: #D8000C;
+  	border-color: #d8000c;
+  	background-color: #FFBABA
+  }
+
+  span.tag_green{
+	color: #4F8A10;
+	border-color: #4F8A10;
+    background-color: #DFF2BF;
+  }
+	.revealed{
+		display: none;
+	}
+
+body.history td.bought{
+	background-color: #4F8A10;
+}
+
+body.history td.sold{
+	background-color: #D8000C;
+}
+
+#hs_link{
+	text-decoration: none;
+	text-align: center;
+	display: block;
+}
+#hs_link:link, #hs_link:visited{
+	color: #000;
+}
+#hs_link:hover{
+	color: #03C9A9;
+}
+.score{
+	font-size: 1.1em;
+}
+.score .bolder{
+	font-weight: bolder;
+}
+
+.score + .score{
+	margin-top: 2em;
+}
+.post_hist_act-update{
+	background-color: RGBA(57, 0, 255, 0.5) !important;
+}
+.post_hist_delta-increase{
+	background-color: RGBA(0, 214, 105, 0.5) !important;
+}
+.post_hist_delta-decrease{
+	background-color: RGBA(237, 107, 92, 0.5) !important;
+}
+
+.dataTables_wrapper{
+	margin-top: 15px;
+}
+
+#insertPoint_after{
+	display: inline-flex;
+	width: 2em;
+	text-align: center;
+	padding: 0.2em;
+	margin: 0 1em;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+}
+#add_auto_update input[type="range"]{
+	width: 100% !important;
+}
+
+#add_auto_update .range-wrap {
+  position: relative;
+  margin: 0 auto 3rem;
+}
+#add_auto_update .range {
+  width: 100%;
+}
