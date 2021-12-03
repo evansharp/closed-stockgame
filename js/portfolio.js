@@ -1,124 +1,178 @@
 $(document).ready(function(){
-	if($('#portfolio_chart').length ){
-		var portfolio_labels = [];
 
-		for (var a = 0; a < updates_series.length; a++){
-			portfolio_labels.push( moment( updates_series[a], 'YYYY-MM-DD H:m:s' ).format('MMM DD HH:mm') );
+if( 	typeof bank_series !== 'undefined' &&
+		typeof portfolio_series !== 'undefined' &&
+		typeof total_series !== 'undefined'
+	){
+
+	var data = [
+		toArr(bank_series),
+		toArr(portfolio_series),
+		toArr(total_series),
+	];
+
+	//init the data object
+	var chartData = {
+  		labels: [],
+  		datasets: []
+	};
+
+	//loop through data arrays to generate datasets
+	for(a = 0; a < data.length; a++){
+		chartData.datasets.push( {
+				data: [],
+				backgroundColor: "",
+				borderColor: "",
+				tension: 0 // draw straight lines
+			});
+
+		//colours to match display legend
+		if( a == 0 ){
+			//bank
+			chartData.datasets[a].backgroundColor = "RGBA(0, 174, 86, 0.25)";
+			chartData.datasets[a].borderColor = "RGBA(0, 174, 86, 1.00)";
+			chartData.datasets[a].steppedLine= true;
+			chartData.datasets[a].label = "Bank Balance";
+		}else if( a == 1 ){
+			//portfolio
+			chartData.datasets[a].backgroundColor = "RGBA(255, 74, 60, 0.25)";
+			chartData.datasets[a].borderColor = "RGBA(255, 74, 60, 1.00)";
+			chartData.datasets[a].label = "Portfolio Value";
+		}else if( a == 2 ){
+			//total value
+			chartData.datasets[a].backgroundColor = "RGBA(250, 201, 0, 0.25)";
+			chartData.datasets[a].borderColor = "RGBA(250, 201, 0, 1.00)";
+			chartData.datasets[a].label = "Net Worth";
 		}
 
-		//bank value series object
-		var bksd = [];
-		for( var i = 0; i < bank_series.length; i ++ ){
-			bksd.push( {
-										x		: new Date( moment(bank_series[i].x, 'YYYY-MM-DD H:m:s' ).format() ),
-										y		: bank_series[i].y,
-										meta: 'Bank Balance: $ ' + bank_series[i].y + ' at ' + moment(bank_series[i].x, 'YYYY-MM-DD H:m:s' ).format('MMM DD HH:mm'),
-									} );
-		}
+		for(var i = 0; i < data[a].length; i++){
+				let tmp = '';
+				if( "log" in data[a][i] ){
+					if( typeof data[a][i]['log'][0] !== 'undefined'){
+						tmp = data[a][i]['log'][0];
+					}
+				}
 
-		//portfolio value series object
-		var ptsd = [];
-		for( var j = 0; j < portfolio_series.length; j ++ ){
-			ptsd.push( {
-										x		: new Date( moment(bank_series[j].x, 'YYYY-MM-DD H:m:s' ).format() ),
-										y		: portfolio_series[j].y,
-										meta: 'Portfolio Value: $ ' + portfolio_series[j].y + ' at ' + moment(portfolio_series[j].x, 'YYYY-MM-DD H:m:s' ).format('MMM DD HH:mm'),
-									} );
-		}
+				chartData.datasets[a].data.push( {
+						x: moment.unix( data[a][i]['x'] ).format('YYYY-MM-DD HH:mm:ss'),
+						y: parseFloat( data[a][i]['y'] ),
+						meta: tmp
+					});
 
-		//combined value series object
-		var cbsd = [];
-		for( var k = 0; k < total_series.length; k ++ ){
-			cbsd.push( {
-										x		: new Date( moment(bank_series[k].x, 'YYYY-MM-DD H:m:s' ).format() ),
-										y		: total_series[k].y,
-										meta: 'Net Worth: $ ' + total_series[k].y + ' at ' + moment(total_series[k].x, 'YYYY-MM-DD H:m:s' ).format('MMM DD HH:mm'),
-									} );
-		}
-
-		var port_chart_data = {
-									labels: portfolio_labels,
-									series: [
-											{
-													name: 'bank-value',
-											    data: bksd
-		    								}
-		    								,{
-		    									name: 'portfolio-value',
-		    									data: ptsd
-		    								},{
-		    									name: 'combined-value',
-		    									data: cbsd
-		    								}
-    								]};
-
-		var port_chart_options = {
-									lineSmooth: false,
-									series: {
-										'bank-value': {
-    								},
-    								'portfolio-value': {
-											showArea: true
-    								},
-    								'combined-value': {
-											//animated with css
-    								}
-									},
-									axisY: {
-											type: Chartist.AutoScaleAxis,
-											onlyInteger: true,
-											},
-									 //axisX: {
-									 //			type: Chartist.FixedScaleAxis,
-									 //			divisor: portfolio_labels.length,
-									 //			labelInterpolationFnc: function( value ) {
-									 //				console.log(value);
-									 //				return moment(value).format('MMM D HH:ss');
-									 //			}
-									 //		},
-									plugins: [
-											Chartist.plugins.tooltip({
-												transformTooltipTextFnc:function(value){return '';} //disable value parameter
-											})
-										]
-  								};
-
-		new Chartist.Line('#portfolio_chart', port_chart_data, port_chart_options);
-
-
-		var seg_labels = [];
-		//prepare and draw segment chart
-		var total_value = 0;
-		for (var a = 0; a < portfolio.length; a++){
-			total_value += parseInt(portfolio[a].value);
 
 		}
-
-		var seg_percentages = [];
-		for (var b = 0; b < portfolio.length; b++){
-			var percent = (portfolio[b].value / total_value) * 100;
-			seg_percentages.push( percent );
-			seg_labels.push( portfolio[b].code + " " + Math.round( percent ) + "%" );
-		}
-		if(seg_percentages.length < 1){
-			seg_labels.push('No Stocks Yet');
-			seg_percentages.push('100');
-		}
-
-		var data_seg_pie = {
-			labels: seg_labels,
-			series: seg_percentages
-		}
-
-		var options_seg_pie = {
-			chartPadding: 30,
-		    labelOffset: 70,
-		    labelDirection: 'explode',
-				labelInterpolationFnc: function(value) {
-    			return value
-  			}
-		};
-
-		new Chartist.Pie('#portfolio_segments_chart', data_seg_pie, options_seg_pie);
 	}
+
+	var ticker_ctx = $('#portfolio_chart_container canvas');
+	if (ticker_ctx) {
+	 	var chart1 = new Chart(ticker_ctx, {
+	 		type: 'line',
+	 		data: chartData,
+			options: {
+			    scales: {
+			      xAxes: [{
+			        type: 'time',
+			        distribution: 'linear',
+			      }],
+			      title: {
+			        display: false,
+			      }
+			    },
+	    		legend: {
+					display: false,
+				},
+				tooltips: {
+					position: 'nearest',
+					// les demo:
+					// https://stackoverflow.com/questions/38622356/chart-js-tooltiptemplate-not-working
+					callbacks:{
+						title: function(tooltipItems, data){
+							var titleString = tooltipItems[0].label;
+							return moment(titleString).format('lll');
+						},
+						label : function(tooltipItem, data) {
+                        	return data.datasets[tooltipItem.datasetIndex].label + ': $' + tooltipItem.yLabel;
+                    	}
+					}
+			 	},
+				plugins: {
+					zoom: {
+						pan: { enabled: false },
+						zoom: {
+							enabled: true,
+							// Enable drag-to-zoom behavior
+							drag: true,
+							mode: 'xy',
+							// Speed of zoom via mouse wheel
+							// (percentage of zoom on a wheel event)
+							speed: 0.1,
+							// Minimal zoom distance required before actually applying zoom
+							threshold: 2,
+							// On category scale, minimal zoom level before actually applying zoom
+							sensitivity: 3
+						}
+					}
+				}
+		 	}
+		});
+	}
+	$('#portfolio_chart_container a').click(function(e){
+		e.preventDefault();
+		chart1.resetZoom();
+	})
+
+}
+if( typeof portfolio !== 'undefined'){
+	chartData = {
+	    datasets: [{
+	        data: [],
+			backgroundColor: []
+	    }],
+	    labels: []
+	};
+
+
+	for(b = 0; b < portfolio.length; b++){
+		chartData.datasets[0].data.push( (portfolio[b].price * parseInt(portfolio[b].owned)).toFixed(2) );
+		chartData.labels.push( portfolio[b].code );
+	}
+
+	// data needs colours
+	const dataLength = chartData.datasets[0].data.length;
+
+	const colorRangeInfo = {
+   		colorStart: 0,
+   		colorEnd: 1,
+   		useEndAsStart: true,
+	}
+	const colorScale = d3.interpolateSinebow;
+
+	var colours = interpolateColors(dataLength, colorScale, colorRangeInfo);
+
+	// apply colours
+	chartData.datasets[0].data.forEach((e, i, a) => {
+		chartData.datasets[0].backgroundColor.push( colours[i] );
+	});
+
+	var port_comp_ctx = $('#portfolio_comp_chart_container canvas');
+	var chart2 = new Chart(port_comp_ctx, {
+    	type: 'doughnut',
+    	data: chartData,
+    	options: {
+			legend: {
+				display: false,
+			},
+			tooltips: {
+				callbacks:{
+					 title: function(tooltipItem, data){
+						return data.labels[ tooltipItem[0].index ];
+					},
+					label : function(tooltipItem, data) {
+						return "$ " + data.datasets[0].data[tooltipItem.index];
+					}
+				}
+			}
+		}
+	});
+}
 });

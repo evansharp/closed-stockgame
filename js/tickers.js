@@ -1,80 +1,165 @@
 $(document).ready(function(){
-//draw main ticker if present
-	if( $('#chart_ticker_all').length ){
 
-		//init the data object
-		var data = {
-			labels : [],
-			series : []
-		};
+if( typeof ticker_all !== 'undefined' ){
+	//convert php json obj back to assoc. array
+	var ticker_all_arr = toArr(ticker_all);
+	console.log(ticker_all);
 
-		var options = {
-										lineSmooth: false,
-										plugins: [
-											Chartist.plugins.tooltip({currency: '$'})
-										]
-		};
+	//init the data object
+	var chartData = {
+  		labels: [],
+  		datasets: []
+	};
 
-		//convert php json obj back to assoc. array
-		var ticker_all_arr = Object.keys( ticker_all ).map(function(key) { return ticker_all[key]; });
+	//loop through each per-stock array to create the graph series
+	for(var i = 0; i < ticker_all_arr.length; i++){
+		chartData.datasets.push( {
+				label: ticker_all_arr[i][0]['code'],
+				data: [],
+				backgroundColor: "",
+				borderColor: "",
+				tension: 0 // draw straight lines between points
+			});
 
+		for(var j = 0; j < ticker_all_arr[i].length; j++ ){
 
-		//use the first stock 'series' in the dataset to pull the timestamps of price updates from. It's close enough.
-		for(var k = 0; k < ticker_all_arr[0].length; k++){
-			var ts = moment(ticker_all_arr[0][k].timestamp, 'YYYY-MM-DD H:m:s');
-			data.labels.push( ts.format( "MMM DD HH:mm" ) );
-		}
-
-		//loop through each per-stock array to create the graph series
-		for(var i = 0; i < ticker_all_arr.length; i++){
-			var price_series = [];
-			for(var j = 0; j < ticker_all_arr[i].length; j++ ){
-				//{meta: 'description', value: 1 }
-				var obj = { meta: ticker_all_arr[i][j].code, value: parseFloat(ticker_all_arr[i][j].price) };
-				price_series.push( obj );
-			}
-			data.series.push( price_series );
-		}
-
-		new Chartist.Line('#chart_ticker_all', data, options);
-
-
-
-		//init the data object for this chart, it will be an array of data-objects
-			var data_segs = [];
-
-		//console.log(ticker_segments);
-		//loop through all segment data sets and draw their graphs, if present
-		for(var a = 0; a < ticker_segments.length; a++){
-
-			var this_seg_arr = Object.keys(ticker_segments[a]).map(function(key) { return ticker_segments[a][key]; });
-			//console.log(this_seg_arr);
-			//init this data array obj for this chart
-			data_segs[a] = {
-				labels : [],
-				series : []
-			};
-
-
-			//use the labels (timestamps) from the all-data graph above
-			data_segs[a].labels = data.labels;
-
-			for(var b = 0; b < this_seg_arr.length; b++){
-				var price_series_seg = [];
-
-				var this_timepoint_arr = Object.keys( this_seg_arr[b] ).map(function(key) { return this_seg_arr[b][key]; });
-
-				for(var c = 0; c < this_timepoint_arr.length; c++){
-					//{meta: 'description', value: 1 }
-					var obj = { meta: this_timepoint_arr[c].code, value: parseFloat(this_timepoint_arr[c].price) };
-					price_series_seg.push( obj );
-				}
-				data_segs[a].series.push( price_series_seg );
-		}
-
-		//use options obj from all-data graph
-
-		new Chartist.Line('#chart_ticker_' + a , data_segs[a], options);
+			chartData.datasets[i].data.push({
+					x: moment.unix( ticker_all_arr[i][j]['timestamp'] ).format('YYYY-MM-DD HH:mm:ss'),
+					y: parseFloat( ticker_all_arr[i][j]['price'] )
+				});
 		}
 	}
+	console.log(chartData);
+
+	// data needs colours
+	const dataLength = chartData.datasets.length;
+
+	const colorRangeInfo = {
+   		colorStart: 0,
+   		colorEnd: 1,
+   		useEndAsStart: true,
+	}
+	const colorScale = d3.interpolateRdYlGn;
+
+	var colours = interpolateColors(dataLength, colorScale, colorRangeInfo);
+
+	// only show market cap initially
+	// apply colours
+	chartData.datasets.forEach((e, i, a) => {
+		if(e.label != "Market Cap"){
+			chartData.datasets[i].hidden = true;
+		}
+		chartData.datasets[i].borderColor = colours[i];
+
+		if(colours[i].indexOf('a') == -1){
+    		var result = colours[i].replace(')', ', 0.2)').replace('rgb', 'rgba');
+		}
+		chartData.datasets[i].backgroundColor = result;
+	});
+
+	var ticker_ctx = $('#ticker_container canvas');
+	if (ticker_ctx) {
+	 	var ticker1 = new Chart(ticker_ctx, {
+	 		type: 'line',
+	 		data: chartData,
+			options: {
+			    scales: {
+			      xAxes: [{
+			        type: 'time',
+			        //distribution: 'linear',
+			      }],
+			      title: {
+			        display: false,
+			      }
+			    },
+	    		legend: {
+					position: 'right',
+					align: 'start',
+					title: {
+						display: true,
+						text: "click to show"
+					},
+					cursor: "pointer",
+		            itemclick: function (e) {
+		                if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+		                    e.dataSeries.visible = false;
+		                } else {
+		                    e.dataSeries.visible = true;
+		                }
+
+		                e.chart.render();
+		            }
+				},
+				tooltips: {
+					position: 'nearest',
+					// les demo:
+					// https://stackoverflow.com/questions/38622356/chart-js-tooltiptemplate-not-working
+					callbacks:{
+						title: function(tooltipItems, data){
+							var titleString = tooltipItems[0].label;
+							return moment(titleString).format('lll');
+						},
+						label : function(tooltipItem, data) {
+                        	return data.datasets[tooltipItem.datasetIndex].label + ': $' + tooltipItem.yLabel;
+                    	}
+					}
+			 	},
+				plugins: {
+					zoom: {
+						pan: { enabled: false },
+						zoom: {
+							enabled: true,
+
+							// Enable drag-to-zoom behavior
+							drag: true,
+
+							// Drag-to-zoom effect can be customized
+							// drag: {
+							// 	 borderColor: 'rgba(225,225,225,0.3)'
+							// 	 borderWidth: 5,
+							// 	 backgroundColor: 'rgb(225,225,225)',
+							// 	 animationDuration: 0
+							// },
+
+							// Zooming directions. Remove the appropriate direction to disable
+							// Eg. 'y' would only allow zooming in the y direction
+							// A function that is called as the user is zooming and returns the
+							// available directions can also be used:
+							//   mode: function({ chart }) {
+							//     return 'xy';
+							//   },
+							mode: 'xy',
+
+							rangeMin: {
+								// Format of min zoom range depends on scale type
+								x: null,
+								y: null
+							},
+							rangeMax: {
+								// Format of max zoom range depends on scale type
+								x: null,
+								y: null
+							},
+
+							// Speed of zoom via mouse wheel
+							// (percentage of zoom on a wheel event)
+							speed: 0.1,
+
+							// Minimal zoom distance required before actually applying zoom
+							threshold: 2,
+
+							// On category scale, minimal zoom level before actually applying zoom
+							sensitivity: 3
+						}
+					}
+				}
+		 	}
+		});
+	}
+
+	$('#ticker_container a').click(function(e){
+		e.preventDefault();
+		ticker1.resetZoom();
+	})
+}
 });

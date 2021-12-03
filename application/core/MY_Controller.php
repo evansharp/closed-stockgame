@@ -10,6 +10,12 @@ class MY_Controller extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 
+		//user role constants
+		defined('USER_ROLE_PLAYER')  OR define('USER_ROLE_PLAYER', 1);
+		defined('USER_ROLE_ADMIN')  OR define('USER_ROLE_ADMIN', 4);
+		defined('USER_ROLE_GOD')  OR define('USER_ROLE_GOD', 5);
+
+		//load all models in all controllers
 		$this->load->model('Stocksmodel');
 		$this->load->model('Adminmodel');
 		$this->load->model('Portfoliomodel');
@@ -59,50 +65,33 @@ class MY_Controller extends CI_Controller {
 
   			}
 
-			if( isset( $_SESSION['user'] ) ){
-				// user has an active session, db data already in sesson
-				// no need to do anything but get on with the requested controller
+			if( !isset( $_SESSION['user'] ) ){
+				// user only might be registered though, need to try logging them in to find out
 
-			}else{
-					// user only might exist, need to log them in to find out
+				// Get User Data from Google and check for 'new user' case
+				$OAuthService = new Google_Service_Oauth2( $this->google_client );
+				$this->google_user_data = $OAuthService->userinfo->get();
 
-					// Get User Data from Google and check for 'new user' case
-					$OAuthService = new Google_Service_Oauth2( $this->google_client );
-					$this->google_user_data = $OAuthService->userinfo->get();
+				$_SESSION['user'] = $this->Adminmodel->get_user( $this->google_user_data['email'] );
 
-					//is admin user or an authorized user?
-					$_SESSION['user_role'] = 'unauthorized';
+				//does user exits yet?
+				if( empty( $_SESSION['user'] ) ){
+					// no
+					// create and proceed
+					$game_userdata = $adminmodel -> add_user(
+																$this->google_user_data['email'],
+																$this->google_user_data['name'],
+																USER_ROLE_PLAYER,
+																$this->google_user_data['picture'],
+																$_SESSION['google_refresh_token']
+															);
+					$_SESSION['user'] = $game_userdata;
+				}
 
-					if( $this->google_user_data['email'] == "evan.sharp@coastmountainacademy.ca"){
-						$_SESSION['user_role'] = 'admin';
-					}else{
-						$_SESSION['user_role'] = 'player';
-					}
-
-					// at this point, if user_role not updated above, let them fall-through as 'unauthorized'
-					if( $_SESSION['user_role'] != 'unauthorized' ){
-
-						$_SESSION['user'] = $this->Adminmodel->get_user( $this->google_user_data['email'] );
-
-						//does user exits yet?
-						if( empty( $_SESSION['user'] ) ){
-							// no
-							// create and proceed
-							$game_userdata = $adminmodel -> add_user(
-																		$this->google_user_data['email'],
-																		$this->google_user_data['name'],
-																		$this->google_user_data['picture'],
-																		$_SESSION['google_refresh_token']
-																	);
-							$_SESSION['user'] = $game_userdata;
-						}
-
-						// record login time
-						$adminmodel -> record_login( $_SESSION['user']['id'] );
-
-
-					}
+				// record login time
+				$adminmodel -> record_login( $_SESSION['user']['id'] );
 			}
+
 		}else {
 			// user has no session so create a login link
 			$this->authUrl = $this->google_client->createAuthUrl();

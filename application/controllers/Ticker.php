@@ -12,6 +12,7 @@ class Ticker extends MY_Controller {
 
 		$stocksmodel = new Stocksmodel();
 		$all_stocks = $stocksmodel->get_all_ticker();
+		//$this->debug($all_stocks);
 		//loop through and split out the per-stock data for the big chart
 		$per_stock = [];
 

@@ -34,7 +34,7 @@
 	        <li><a href="<?php echo base_url(); ?>history" class="<?php if( $active_nav == "history" ){ echo "active"; } ?>"> History </a></li>
     	</ul>
 
-	 	<?php if( isset($_SESSION['user_role']) ): ?>
+	 	<?php if( isset($_SESSION['user']['user_role']) ): ?>
 			<?php if(isset($_SESSION['user']['google_avatar'])):?>
 				<img src="<?php echo $_SESSION['user']['google_avatar']; ?>" alt="" class="user_img">
 			<?php endif;?>
@@ -52,15 +52,17 @@
 			<h1> The Stockmarket Game </h1>
 			</div>';
 
-			if( $game_online || isset( $_SESSION['user_role'] ) && $_SESSION['user_role'] == "admin" ){
+			if( $game_online === true || isset( $_SESSION['user']['user_role'] ) && $_SESSION['user']['user_role'] >= USER_ROLE_ADMIN ){
 				// game is online or user is admin
 
-				if ( isset( $_SESSION['user_role'] ) && $_SESSION['user_role'] != 'unauthorized' ){
+				if ( isset( $_SESSION['user']['user_role'] ) ){
 					// user had not fallen-through auth as 'unauthorized'
 
 					echo $page;
 
-					if( !$game_online ){
+
+
+					if( $game_online === false ){
 						//reminder tag for ME
 						echo '<aside id="game_not_online_reminder">GAME OFFLINE</aside>';
 					}
@@ -78,7 +80,7 @@
 			}
 
 
-				if(isset( $_SESSION['user_role'] ) && $_SESSION['user_role'] == "admin" && $title != 'Admin'){
+				if(isset( $_SESSION['user']['user_role'] ) && $_SESSION['user']['user_role'] >= USER_ROLE_ADMIN  && $title != 'Admin'){
 				echo "<a id='admin_link' class='' href='admin/dashboard'>ADMIN</a>";
 			}?>
 		</div> <!-- end #main -->

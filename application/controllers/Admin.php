@@ -10,14 +10,12 @@ class Admin extends MY_Controller {
 		$this->historymodel = new Historymodel();
 		$this->portfoliomodel = new Portfoliomodel();
 
-		if( $_SESSION['user_role'] != "admin" ){
-			redirect( base_url() );
-		}
+
 	}
 
 	public function index( $nav_active = 'dashboard' ) {
 
-		die('here');
+
 
 		if( isset($_POST) && $_POST ){
 
@@ -56,10 +54,18 @@ class Admin extends MY_Controller {
 
 			// settings
 
-			if( isset($_POST['set_setting_game_on']) && !empty($_POST['set_setting_game_on']) ){
-				$this->adminmodel->set_setting( 'game_active', $_POST['set_setting_game_on'] );
+			if( isset($_POST['set_setting_game_online']) ){
+
+				$this->adminmodel->set_setting( 'game_online', $_POST['set_setting_game_online'] );
+
 			}
+
+			if(isset($_POST['set_setting_game_running']) ){
+				$this->adminmodel->game_running_toggle($_POST['set_setting_game_running']);
+			}
+
 			if( isset($_POST['reset']) && !empty($_POST['reset']) ){
+
 				$this->adminmodel->reset_game();
 				$this->stocksmodel -> reset_stocks();
 				redirect('logout', 'refresh');
@@ -73,16 +79,13 @@ class Admin extends MY_Controller {
 					'player_activity' => $this->adminmodel -> get_login_history(),
 					'explorer' => $this->prepare_explorer(),
 					'stock_prices' => $this->stocksmodel -> get_all_current_prices(),
-					'authorized_classroom' => $this->adminmodel -> get_setting('classroom'),
-					'possible_classrooms' => $classrooms,
 
-					'game_online_selected' => $this->adminmodel -> get_setting('game_online'),
-					'game_on' => $this->adminmodel -> get_setting('game_active'),
+					'game_online' => $this->adminmodel -> get_setting('game_online'),
 
-					'auto_updates' => $this->adminmodel -> get_setting('auto_updates'),
+					'game_running' => $this->adminmodel -> get_setting('game_running'),
 					'auto_update_info' => $this->adminmodel -> get_status(),
-					'auto_update_toggle_result' => ( isset( $auto_update_toggle_result ) ) ? $auto_update_toggle_result : false,
-					'auto_updates_template' => $this ->adminmodel -> get_auto_updates_template(),
+
+
 					'show_worth' => $this->adminmodel -> get_setting('show_worth'),
 					'days_running' => $this->adminmodel->get_days_running() + 1,
 					'total_trades' => $this->adminmodel->get_total_trades(),

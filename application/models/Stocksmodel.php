@@ -15,7 +15,9 @@ class Stocksmodel extends MY_Model {
         $this->db->from($this->ticker_table);
         $this->db->join($this->stocks_table, $this->stocks_table. '.stock_id = '. $this->ticker_table . '.stock_id' );
         $this->db->join($this->segments_table, $this->segments_table. '.segment_id = '. $this->stocks_table . '.segment_id' );
+
         $this->db->where($this->ticker_table.'.timestamp > NOW() - INTERVAL 1 DAY', null, false);
+
         $this->db->order_by($this->ticker_table.'.stock_id', 'ASC'); //sort into stock groupings
         $this->db->order_by('timestamp', 'ACS'); //draw graphs newest-to-limit data
 
@@ -119,7 +121,7 @@ class Stocksmodel extends MY_Model {
 			                   'timestamp' => $now,
 			                   'tx_price' => $price,
 			                   'tx' => $num,
-                               'buying_selling' => DB_BUYING
+                               'event_type' => DB_BUYING
 			             ];
 			    $this->db->insert($this->history_table, $txdata);
 
@@ -182,7 +184,7 @@ class Stocksmodel extends MY_Model {
                                 'timestamp' => $now,
                                 'tx_price' => $price,
                                 'tx' => ($num * -1),
-                                'buying_selling' => DB_SELLING
+                                'event_type' => DB_SELLING
                             ];
     			    $this->db->insert($this->history_table, $txdata);
 
@@ -253,7 +255,7 @@ class Stocksmodel extends MY_Model {
                     'stock_id' => $update['id'],
                     'price'    => $update['price'],
                     'timestamp' => $now,
-                    'buying_selling' => DB_UPDATE
+                    'event_type' => DB_UPDATE
                     ];
             $this->db->insert($this->ticker_table, $data);
         }

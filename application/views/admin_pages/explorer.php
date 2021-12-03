@@ -12,7 +12,7 @@
                 <th scope="col"> Net Worth </td>
                 <th scope="col"> Trades </td>
                 <th scope="col"> Last Trade </td>
-                <th scope="col"> Portfolio </td>
+                <th scope="col"> Actions </td>
             </tr>
         </thead>
         <tbody>
@@ -43,21 +43,57 @@
                         //last trade
                         echo "<td>". $data['last_trade'] ."</td>";
 
-                        //portfolio
-                        echo '<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#portfolio-explorer-'. $data['id'] .'">Show</button></td>';
+                        //actions
+                        echo '<td>
+
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#portfolio-explorer-'. $data['id'] .'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-zoom-in" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+  <path d="M10.344 11.742c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1 6.538 6.538 0 0 1-1.398 1.4z"/>
+  <path fill-rule="evenodd" d="M6.5 3a.5.5 0 0 1 .5.5V6h2.5a.5.5 0 0 1 0 1H7v2.5a.5.5 0 0 1-1 0V7H3.5a.5.5 0 0 1 0-1H6V3.5a.5.5 0 0 1 .5-.5z"/>
+</svg>
+                        </button>
+
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_player_confirm_modal" data-playername="'.$data['name'].'" data-player-id="'.$data['id'].'">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"/>
+</svg>
+                        </button>
+                        </td>';
                     echo "</tr>";
                 }
             ?>
         </tbody>
     </table>
 </main>
+<?php
+// ---------------------------- Delete User Confirm modal ---------------->?>
+<div class="modal fade delete_player_confirm_modal" id="delete_player_confirm_modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Delete Player</h3>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to permeneantly and completely delete <b><span></span></b> from the game?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <form action="explorer" method="post">
+                    <button type="submit" class="btn btn-danger btn-ok" id="delete_confirm" name="delete_user" value="">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <?php
 // ---------------------------- Portfolio explorer modal ---------------->
-
 foreach($explorer as $player => $data):?>
 
-	<div class="modal fade" id="portfolio-explorer-<?php echo $data['id'];?>" role="dialog" tabindex="-1">
+	<div class="modal fade portfolio_explorer_modal" id="portfolio-explorer-<?php echo $data['id'];?>" role="dialog" tabindex="-1">
 
 		<div class="modal-dialog modal-lg">
 
@@ -112,6 +148,8 @@ foreach($explorer as $player => $data):?>
 										$code = $rec['code'];
 									}
 								}
+
+
 
 								echo "<tr>";
 								echo "<td>" . date("F j, Y, g:i a", $trade['timestamp']) . "</td>";

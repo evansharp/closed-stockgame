@@ -25,19 +25,13 @@
               <div class="card-body">
                   <?php echo $auto_update_info; ?>
 
-                <?php if($auto_update_toggle_result):?>
-                    <div class="alert alert-info" role="alert">
-                            <?php echo $auto_update_toggle_result; ?>
-                    </div>
-                <?php endif;?>
-
               </div>
             </div>
 
         </div>
     </div>
     <div class="row">
-        <div class="col-8">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     Player Logins

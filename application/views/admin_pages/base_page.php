@@ -28,10 +28,10 @@
                   Prospecti
                 </a>
               </li>
-			  <li class="nav-item">
+              <li class="nav-item">
                 <a class="nav-link <?php echo $admin_nav == 'auto_updates' ? 'active':''; ?>" href="auto_updates">
                   <i class="fa fa-magic"></i>
-                  Classic
+                  Auto Updates
                 </a>
               </li>
               <li class="nav-item">

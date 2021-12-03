@@ -1,0 +1,79 @@
+.admin #main{
+    width: 100%;
+}
+
+.admin main .row + .row{
+    margin-top: 15px;
+}
+
+.admin h2{
+    margin-top: 30px;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+    float: left;
+    z-index: 100; /* Behind the navbar */
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.sidebar .nav-link {
+  font-weight: 400;
+  color: #777;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link:active{
+    color: #333;
+    background-color: #F7F7F7
+}
+
+.sidebar .nav-link .fa {
+  margin-right: 4px;
+  color: inherit;
+}
+
+.sidebar .nav-link.active {
+  color: #00C2A0;
+}
+
+.sidebar .nav-link:hover .fa,
+.sidebar .nav-link.active .fa {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+/*
+* content
+*/
+
+.auto_update_price_table .row{
+    padding: 0.3em 0;
+}
+#confirm_update_delete .modal-header span{
+    font-weight: 400;
+}
+
+/*
+* Explorer Modal
+*/
+.portfolio_explorer_modal .data_table{
+    width: 90% !important;
+
+}
