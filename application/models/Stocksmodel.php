@@ -299,14 +299,16 @@ class Stocksmodel extends MY_Model {
         //get the most recent price of all stocks
 
         $q = $this->db->query("
-            SELECT t1.*
-            FROM `". $this->ticker_table ."` AS t1
-            LEFT OUTER JOIN `". $this->ticker_table ."` AS t2
-                ON t1.stock_id = t2.stock_id
-                AND (t1.timestamp < t2.timestamp
-                OR (t1.timestamp = t2.timestamp AND t1.id < t2.id))
-            WHERE t2.stock_id IS NULL
+            SELECT
+                stock_id,
+                price,
+                MAX(timestamp) AS timestamp
+            FROM
+                `". $this->ticker_table ."`
+            GROUP BY
+                stock_id
         ");
+
 
         if($q->num_rows() > 0){
             return $q->result_array();
@@ -334,14 +336,14 @@ class Stocksmodel extends MY_Model {
     function get_all_current_prices_with_trend(){
         //get the most recent price of all stocks
         $q = $this->db->query("
-            SELECT t1.*
-            FROM `". $this->ticker_table ."` AS t1
-            LEFT OUTER JOIN `". $this->ticker_table ."` AS t2
-                ON t1.stock_id = t2.stock_id
-                AND (t1.timestamp < t2.timestamp
-                    OR (t1.timestamp = t2.timestamp AND t1.id < t2.id)
-                    )
-            WHERE t2.stock_id IS NULL
+            SELECT
+                stock_id,
+                price,
+                MAX(timestamp) AS timestamp
+            FROM
+                `". $this->ticker_table ."`
+            GROUP BY
+                stock_id
         ");
 
         $latest_prices = [];
@@ -349,17 +351,24 @@ class Stocksmodel extends MY_Model {
             $latest_prices = $q->result_array();
         }
 
+
         // get all next-oldest stock prices
         // requires non-strict GROUPBY mode on the db:
         // https://stackoverflow.com/a/41887627/267786
+
         $q2 = $this->db->query("
-        SELECT t1.*, COUNT(*) AS pos
-        FROM `". $this->ticker_table ."` AS t1
-        LEFT JOIN `". $this->ticker_table ."` AS t2
-            ON t2.stock_id = t1.stock_id AND t2.timestamp >= t1.timestamp
-            GROUP BY
-            t1.stock_id, t1.timestamp
-            HAVING pos = 2;
+            SELECT
+                stock_id,
+                price,
+                timestamp
+            FROM
+                `". $this->ticker_table ."`
+            WHERE
+                timestamp < (SELECT MAX(timestamp) AS timestamp FROM `". $this->ticker_table ."`)
+            ORDER BY
+                timestamp DESC
+            LIMIT
+                ". count($latest_prices) .";
         ");
 
         if( $q2 -> num_rows() > 0 ){
@@ -367,6 +376,7 @@ class Stocksmodel extends MY_Model {
 
             foreach ( $latest_prices as $i => $latest ) {
                 foreach( $prior_prices as $prior ){
+
                     if( $prior['stock_id'] == $latest['stock_id'] ){
                         if( $prior['price'] > $latest['price'] )
                             // dropping
@@ -387,6 +397,8 @@ class Stocksmodel extends MY_Model {
                 $latest_prices[$i]['trend'] = "same";
             }
         }
+
+        $this->debug($latest_prices);
 
         return $latest_prices;
     }
@@ -420,6 +432,7 @@ class Stocksmodel extends MY_Model {
     }
 
     function get_stocks(){
+
         $this->db->select('*');
         $this->db->from( $this->stocks_table );
         $this->db->join($this->segments_table, $this->segments_table. '.segment_id = '. $this->stocks_table . '.segment_id' );

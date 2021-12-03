@@ -12,10 +12,15 @@ class Buysell extends MY_Controller {
 		$portfoliomodel = new Portfoliomodel();
 		$histmodel = new Historymodel();
 
+
+
 		$data = [];
 		$result = [null,null,null];
 		$all_stocks = $stocksmodel -> get_stocks();
+
 		$all_stock_prices = $stocksmodel -> get_all_current_prices_with_trend();
+		
+		$this->debug( $stocksmodel -> get_all_current_prices_with_trend() );
 
 
 		// do buy or sell actions
@@ -30,7 +35,7 @@ class Buysell extends MY_Controller {
 				$hs->check_new_highscore( [$_SESSION['user']['name'], $result[1]], MOST_TRADES);
 			}
 		}
-		
+
 		if(isset($_POST['sell_num_stock']) && !empty($_POST['sell_num_stock'])
 			&& isset($_POST['sell_which_stock']) && !empty($_POST['sell_which_stock'])){
 

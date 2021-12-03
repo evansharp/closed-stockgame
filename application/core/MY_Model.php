@@ -31,4 +31,14 @@ class MY_Model extends CI_Model {
 			define('UPDATES_LIMIT', 20);
 		}
 	}
+
+	public function debug( $inspect = null ){
+
+		if( $inspect == null){
+			$inspect = $_SESSION;
+		}
+
+		echo "<pre>".print_r( $inspect, true)."</pre>";
+		die();
+	}
 }

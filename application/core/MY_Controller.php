@@ -1,11 +1,11 @@
 <?php
 
 class MY_Controller extends CI_Controller {
-		protected $authUrl;
-		protected $access_token;
-		protected $google_user_data;
-		protected $google_client;
-		public $game_online;
+	protected $authUrl;
+	protected $access_token;
+	protected $google_user_data;
+	protected $google_client;
+	public $game_online;
 
 	public function __construct() {
 		parent::__construct();
@@ -43,8 +43,10 @@ class MY_Controller extends CI_Controller {
 			header('Location: ' . filter_var(base_url(), FILTER_SANITIZE_URL));
 		}
 
-		// Set Access Token from session for requests
-		if ( isset($_SESSION['access_token']) && $_SESSION['access_token'] ) {
+
+
+		// Set Access Token in Google Client from session in order to make API requests
+		if ( isset( $_SESSION['access_token'] ) && $_SESSION['access_token'] ) {
 
 			$this->google_client->setAccessToken( $_SESSION['access_token'] );
 
@@ -105,8 +107,6 @@ class MY_Controller extends CI_Controller {
 			// user has no session so create a login link
 			$this->authUrl = $this->google_client->createAuthUrl();
 
-			//die('here');
-
 			//if calling a page wihtout a session, just render the template
 			 if( !empty( $this->uri->segment(1) ) ){
 			 	//header( 'Location: ' . $this->authUrl );
@@ -132,10 +132,13 @@ class MY_Controller extends CI_Controller {
 	}
 
 	public function debug( $inspect = null ){
+
 		if( $inspect == null){
 			$inspect = $_SESSION;
 		}
 
-		die("<pre>".print_r( $inspect, true)."</pre>");
+		echo "<pre>".print_r( $inspect, true)."</pre>";
+
+		die();
 	}
 }

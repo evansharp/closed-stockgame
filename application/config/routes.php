@@ -20,6 +20,3 @@ $route['marketupdate'] = 'market/gameTick';
 $route['default_controller'] = 'ticker';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-$route['default_controller'] = 'ticker';
-$route['404_override'] = '';
-$route['translate_uri_dashes'] = FALSE;
