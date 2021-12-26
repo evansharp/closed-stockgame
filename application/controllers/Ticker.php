@@ -41,7 +41,11 @@ class Ticker extends MY_Controller {
 					$p++;
 				}
 			}
-			$avg = round( $sum/ $p, 2 );
+			if($p > 0){
+				$avg = round( $sum/ $p, 2 );
+			}else{
+				$avg = 0;
+			}
 			$per_stock['Index2'][$i]['price'] = $avg;
 			$per_stock['Index2'][$i]['timestamp'] = $time[0]['timestamp'];
 			$per_stock['Index2'][$i]['code'] = 'Comodities';

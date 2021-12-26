@@ -93,18 +93,16 @@ class Adminmodel extends MY_Model {
             return;
         }elseif( $action == true ){
 
-            die('activate game running');
-
             $tmpfilepath = '/tmp/crontab.txt';
 
             // https://crontab.guru/#0_9,13_*_*_*
             // "At minute 0 past hour 9 and 13"
 
             // production
-            $job  = "0 9,13 * * * /usr/bin/php ". FCPATH ."index.php cron do_auto_update 2>&1 | logger \n";
+            //$job  = "0 9,13 * * * /usr/bin/php ". FCPATH ."index.php marketupdate 2>&1 | logger \n";
 
             //dev
-            //$job  = "* * * * * /usr/bin/php ". FCPATH ."/index.php cron do_auto_update 2>&1 | logger\n";
+            $job  = "0/5 * * * * /usr/bin/php ". FCPATH ."index.php market gameTick 2>&1 | logger\n";
 
             // exec cron control script here using $action as the param
             // https://stackoverflow.com/questions/6548746/how-to-start-stop-a-cronjob-using-php
@@ -370,6 +368,10 @@ class Adminmodel extends MY_Model {
     //----------------------------------------
 
     function reset_game(){
+        // offline
+        $this->set_setting( 'game_online', 0 );
+        $this->set_setting( 'game_active', 0 );
+
         //delete all past game data
         $this->db->empty_table( $this->users_table );
         $this->db->empty_table( $this->ticker_table );
@@ -381,18 +383,23 @@ class Adminmodel extends MY_Model {
         $this->db->where('prospectus is not null');
         $this->db->update( $this->stocks_table );
 
-        //reset auto updates
-        $this->set_setting('last_update_was_auto', 0);
-        $this->set_setting( 'last_auto_update_num', 0 );
-        $this->set_setting( 'last_auto_update_time', null );
-        $this->auto_updates_toggle( 'not_active' );
 
-        // offline
-        $this->set_setting( 'game_online', 0 );
 
         //reset prices to start
-        $this->load->model('Stocksmodel');
-        $this->Stocksmodel->auto_update_prices( 0 );
+        //$this->load->model('Stocksmodel');
+        //$this->Stocksmodel->auto_update_prices( 0 );
+    }
+
+    function purge_stock_history(){
+        // offline
+        $this->set_setting( 'game_online', 0 );
+        $this->set_setting( 'game_active', 0 );
+
+        //delete past stock data
+        $this->db->empty_table( $this->ticker_table );
+        $this->db->query("
+            ALTER TABLE ". $this->ticker_table ."
+            AUTO_INCREMENT = 1");
     }
 
     function get_all_settings(){

@@ -38,7 +38,7 @@ class MY_Controller extends CI_Controller {
 		$this->google_client->addScope("https://www.googleapis.com/auth/userinfo.email");
 
 		$this->google_client->setAccessType('offline');        // offline access
-		//$this->google_client->setApprovalPrompt('force');
+		$this->google_client->setApprovalPrompt('force');
 
 		// process auth code if doing a new scope auth
 		if ( isset( $_GET['code'] ) ) {

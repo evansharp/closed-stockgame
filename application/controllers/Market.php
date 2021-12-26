@@ -1,12 +1,15 @@
 <?php
 
-class Market extends MY_Controller {
+class Market extends CI_Controller {
 
 	protected $sm;
 	protected $ad;
 
 	public function __construct() {
 		parent::__construct();
+
+		$this->load->model('Stocksmodel');
+		$this->load->model('Adminmodel');
 
 		$this->sm = new Stocksmodel();
 		$this->ad = new Adminmodel();
@@ -19,13 +22,11 @@ class Market extends MY_Controller {
 
 		// first make sure this IS our server's cron job calling...
 		// key is md5 hash of "go"
-		if( $_GET['key'] == '34d1f91fb2e514b8576fab1a75a89a6b' ){
+		//if( $_GET['key'] == '34d1f91fb2e514b8576fab1a75a89a6b' ){
 
-			// DEBUg
-			//ensure gameticks are happeneing with db counter
-			//$tmp = $this->ad->get_setting( 'test' );
-			//$this->ad->set_setting( 'test', $tmp + 1 );
-
+		if( is_cli() ){
+			echo "[Stockgame] Gametick ... ";
+			
 			$stocks = $this->sm->get_stocks();
 			$prices = $this->sm->get_all_current_prices();
 			$updates = [];
@@ -56,11 +57,14 @@ class Market extends MY_Controller {
 			}
 
 			//write new prices to database
-			$this->sm->update_stocks( $updates );
-			return "done";
-		}else{
-			return false;
-		}
+			if ( $this->sm->update_stocks( $updates ) ){
+				echo "Success. \n";
+			}else{
+				echo "Failed. \n";
+			}
+		}else {
+            echo "You dont have access";
+        }
 	}
 
 	private function act_of_god( $volco, $old_price, $free_cap){

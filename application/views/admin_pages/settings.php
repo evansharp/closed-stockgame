@@ -46,7 +46,7 @@
 
         <div class="row">
             <div class="col-md-1"></div>
-            <div class="col-md-6">Game Running? <span class="tag <?php echo ($game_running == "active") ? "tag_green" : "tag_red" ?>"><?php echo ($game_running == true) ? "Yes" : "No"; ?></span>
+            <div class="col-md-6">Game Running? <span class="tag <?php echo ($game_running == true) ? "tag_green" : "tag_red" ?>"><?php echo ($game_running == true) ? "Yes" : "No"; ?></span>
             </div>
 
             <div class="col-md-5">
@@ -81,15 +81,23 @@
 
         <div class="row">
 
-            <div class="col">
+            <div class="col-3">
+                <form action="<?php echo base_url() . 'admin/settings'; ?>" method="post">
+                    <input type="hidden" name="reset" value="tsarbomba">
+                    <button class="btn btn-danger text-end" type="submit"> Hard Reset Game</button>
+                </form>
+            </div>
+            <div class="col-3">
+                <form action="<?php echo base_url() . 'admin/settings'; ?>" method="post">
+                    <input type="hidden" name="reset" value="littleboi">
+                    <button class="btn btn-warning text-end" type="submit"> Soft Reset Game</button>
+                </form>
+            </div>
+            <div class="col-3"></div>
+            <div class="col-3">
                 <form action="<?php echo base_url() . 'admin/settings'; ?>" method="post">
                     <input type="hidden" name="manual_hs" value="showmepotatosalad">
                     <button class="btn btn-secondary text-end" type="submit">Check for Highscores</button>
-                </form>
-
-                <form action="<?php echo base_url() . 'admin/settings'; ?>" method="post">
-                    <input type="hidden" name="reset" value="tsarbomba">
-                    <button class="btn btn-danger text-end" type="submit"> Reset Game</button>
                 </form>
             </div>
         </div>

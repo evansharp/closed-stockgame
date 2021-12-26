@@ -251,31 +251,36 @@ class Stocksmodel extends MY_Model {
         $data = [];
         $now = date("Y-m-d H:i:s");
         foreach($updates as $update){
-            $data = [
+            $data[] = [
                     'stock_id' => $update['id'],
                     'price'    => $update['price'],
                     'timestamp' => $now,
                     'event_type' => DB_UPDATE
                     ];
-            $this->db->insert($this->ticker_table, $data);
         }
+        return $this->db->insert_batch($this->ticker_table, $data);
 
-        $q = $this->db->get( $this->users_table );
-        if($q->num_rows() > 0){
-            $users = $q->result_array();
-        }else{
-            $users = array();
-        }
 
-        foreach($users as $user){
-            $data2 = [
-                    'user_id' => $user['id'],
-                    'portfolio' => $user['portfolio'],
-                    'bank_balance' => $user['bank_balance'],
-                    'timestamp' => $now
-                    ];
-            $this->db->insert($this->portfolio_history_table, $data2);
-        }
+        // Why am I just duplicating player portolios each gametick?
+        // seems pointless
+
+        // $q = $this->db->get( $this->users_table );
+        // if($q->num_rows() > 0){
+        //     $users = $q->result_array();
+        // }else{
+        //     $users = array();
+        // }
+        //
+        // foreach($users as $user){
+        //     $data2 = [
+        //             'user_id' => $user['id'],
+        //             'portfolio' => $user['portfolio'],
+        //             'bank_balance' => $user['bank_balance'],
+        //             'timestamp' => $now
+        //             ];
+        //     $this->db->insert($this->portfolio_history_table, $data2);
+        // }
+
     }
 
     function update_prospectus( $stock_id, $new_text ){

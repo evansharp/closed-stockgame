@@ -15,7 +15,7 @@ $route['leaderboard'] = 'leaderboard';
 
 $route['admin/(:any)'] = 'admin/index/$1';
 //$route['ajax/(:any)'] = 'ajax/$1';
-$route['marketupdate'] = 'market/gameTick';
+//$route['marketupdate'] = 'market/gameTick';
 
 $route['default_controller'] = 'ticker';
 $route['404_override'] = '';

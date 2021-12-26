@@ -55,9 +55,7 @@ class Admin extends MY_Controller {
 			// settings
 
 			if( isset($_POST['set_setting_game_online']) ){
-
 				$this->adminmodel->set_setting( 'game_online', $_POST['set_setting_game_online'] );
-
 			}
 
 			if(isset($_POST['set_setting_game_running']) ){
@@ -66,9 +64,20 @@ class Admin extends MY_Controller {
 
 			if( isset($_POST['reset']) && !empty($_POST['reset']) ){
 
-				$this->adminmodel->reset_game();
-				$this->stocksmodel -> reset_stocks();
-				redirect('logout', 'refresh');
+				if( $_POST['reset'] == "tsarbomba"){
+					//delete players, tickers, etc.
+					$this->adminmodel->reset_game();
+					// set all stock prices to 1
+					$this->stocksmodel -> reset_stocks();
+					redirect('logout', 'refresh');
+
+				}elseif( $_POST['reset'] == "littleboi") {
+					//delete tickers
+					$this->adminmodel->purge_stock_history();
+
+					// set all stock prices to 1
+					$this->stocksmodel -> reset_stocks();
+				}
 			}
 
 		}
