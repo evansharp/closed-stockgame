@@ -20,13 +20,9 @@ class Market extends CI_Controller {
 		// calculate a change for all stock prices based on
 		// their segment volitility coefficeient
 
-		// first make sure this IS our server's cron job calling...
-		// key is md5 hash of "go"
-		//if( $_GET['key'] == '34d1f91fb2e514b8576fab1a75a89a6b' ){
-
 		if( is_cli() ){
 			echo "[Stockgame] Gametick ... ";
-			
+
 			$stocks = $this->sm->get_stocks();
 			$prices = $this->sm->get_all_current_prices();
 			$updates = [];

@@ -49,5 +49,4 @@
 </div>
 <script>
 	var activity = <?php echo json_encode($player_activity); ?>;
-	var auto_updates_template = <?php echo json_encode($auto_updates_template); ?>;
 </script>

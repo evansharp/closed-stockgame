@@ -29,29 +29,29 @@ class Ticker extends MY_Controller {
 		}
 
 		// comodities index
-		$i = 0;
-		$p = 0;
-		foreach($per_timestamp as $time){
-			$sum = 0.0;
-			$p = 0;
-			foreach($time as $stock){
-				//die("<pre>".print_r($stock, true)."</pre>");
-				if( $stock['is_comodity'] ){
-					$sum += floatval( $stock['price'] );
-					$p++;
-				}
-			}
-			if($p > 0){
-				$avg = round( $sum/ $p, 2 );
-			}else{
-				$avg = 0;
-			}
-			$per_stock['Index2'][$i]['price'] = $avg;
-			$per_stock['Index2'][$i]['timestamp'] = $time[0]['timestamp'];
-			$per_stock['Index2'][$i]['code'] = 'Comodities';
-			$i++;
-		}
-		array_unshift( $per_stock, array_pop( $per_stock ) );
+		// $i = 0;
+		// $p = 0;
+		// foreach($per_timestamp as $time){
+		// 	$sum = 0.0;
+		// 	$p = 0;
+		// 	foreach($time as $stock){
+		// 		//die("<pre>".print_r($stock, true)."</pre>");
+		// 		if( $stock['is_comodity'] ){
+		// 			$sum += floatval( $stock['price'] );
+		// 			$p++;
+		// 		}
+		// 	}
+		// 	if($p > 0){
+		// 		$avg = round( $sum/ $p, 2 );
+		// 	}else{
+		// 		$avg = 0;
+		// 	}
+		// 	$per_stock['Index2'][$i]['price'] = $avg;
+		// 	$per_stock['Index2'][$i]['timestamp'] = $time[0]['timestamp'];
+		// 	$per_stock['Index2'][$i]['code'] = 'Comodities';
+		// 	$i++;
+		// }
+		// array_unshift( $per_stock, array_pop( $per_stock ) );
 
 		// Generl market index
 		$i = 0;

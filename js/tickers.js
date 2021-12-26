@@ -1,39 +1,15 @@
-$(document).ready(function(){
+function processData( strData ){
 
-if( typeof ticker_all !== 'undefined' ){
-	//convert php json obj back to assoc. array
-	var ticker_all_arr = toArr(ticker_all);
-	console.log(ticker_all);
+	// turn json back into array
+	let arrData = toArr( strData );
 
-	//init the data object
-	var chartData = {
+	//init the data object for Chart JS
+	let chartData = {
   		labels: [],
   		datasets: []
 	};
 
-	//loop through each per-stock array to create the graph series
-	for(var i = 0; i < ticker_all_arr.length; i++){
-		chartData.datasets.push( {
-				label: ticker_all_arr[i][0]['code'],
-				data: [],
-				backgroundColor: "",
-				borderColor: "",
-				tension: 0 // draw straight lines between points
-			});
-
-		for(var j = 0; j < ticker_all_arr[i].length; j++ ){
-
-			chartData.datasets[i].data.push({
-					x: moment.unix( ticker_all_arr[i][j]['timestamp'] ).format('YYYY-MM-DD HH:mm:ss'),
-					y: parseFloat( ticker_all_arr[i][j]['price'] )
-				});
-		}
-	}
-	console.log(chartData);
-
 	// data needs colours
-	const dataLength = chartData.datasets.length;
-
 	const colorRangeInfo = {
    		colorStart: 0,
    		colorEnd: 1,
@@ -41,20 +17,47 @@ if( typeof ticker_all !== 'undefined' ){
 	}
 	const colorScale = d3.interpolateRdYlGn;
 
-	var colours = interpolateColors(dataLength, colorScale, colorRangeInfo);
+	var colours = interpolateColors(arrData.length, colorScale, colorRangeInfo);
 
-	// only show market cap initially
-	// apply colours
-	chartData.datasets.forEach((e, i, a) => {
-		if(e.label != "Market Cap"){
-			chartData.datasets[i].hidden = true;
-		}
-		chartData.datasets[i].borderColor = colours[i];
+	//loop through each per-stock array to create the graph series
+	for(var i = 0; i < arrData.length; i++){
 
 		if(colours[i].indexOf('a') == -1){
-    		var result = colours[i].replace(')', ', 0.2)').replace('rgb', 'rgba');
+    		var bgColour = colours[i].replace(')', ', 0.2)').replace('rgb', 'rgba');
 		}
-		chartData.datasets[i].backgroundColor = result;
+
+		chartData.datasets.push( {
+				label: arrData[i][0]['code'],
+				data: [],
+				backgroundColor: bgColour,
+				borderColor: colours[i],
+				tension: 0 // draw straight lines between points
+			});
+
+		for(var j = 0; j < arrData[i].length; j++ ){
+
+			chartData.datasets[i].data.push({
+					x: moment( arrData[i][j]['timestamp'] ).format('YYYY-MM-DD HH:mm:ss'),
+					y: parseFloat( arrData[i][j]['price'] )
+				});
+		}
+	}
+
+	return chartData;
+}
+
+
+$(document).ready(function(){
+
+if( typeof ticker_all !== 'undefined' ){
+
+	let chartData = processData( ticker_all )
+
+	// only show market cap initially
+	chartData.datasets.forEach((e, i, a) => {
+		if(e.label != "Market Cap"){
+		//	chartData.datasets[i].hidden = true;
+		}
 	});
 
 	var ticker_ctx = $('#ticker_container canvas');

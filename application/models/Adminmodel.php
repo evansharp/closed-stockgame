@@ -102,7 +102,7 @@ class Adminmodel extends MY_Model {
             //$job  = "0 9,13 * * * /usr/bin/php ". FCPATH ."index.php marketupdate 2>&1 | logger \n";
 
             //dev
-            $job  = "0/5 * * * * /usr/bin/php ". FCPATH ."index.php market gameTick 2>&1 | logger\n";
+            $job  = "*/5 * * * * /usr/bin/php ". FCPATH ."index.php market gameTick 2>&1 | logger\n";
 
             // exec cron control script here using $action as the param
             // https://stackoverflow.com/questions/6548746/how-to-start-stop-a-cronjob-using-php
