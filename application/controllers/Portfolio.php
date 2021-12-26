@@ -38,7 +38,7 @@ class Portfolio extends MY_Controller {
 					'portfolio_value' => $portfolio_value,
 					'total_series' => $total_series,
 					'total_value' => $total_value,
-					'portfolio' => $this->prepare_portfolio($_SESSION['user']['email']),
+					'portfolio' => $this->prepare_portfolio( $_SESSION['user']['id'] ),
 					'updates_series' => $this->prepare_update_times($_SESSION['user']['id']),
 					'trade_count' => $this->historymodel->get_num_trades($_SESSION['user']['id']),
 					'game_start' => $this->historymodel->get_game_start()
@@ -199,8 +199,8 @@ class Portfolio extends MY_Controller {
 		return $series;
 	}
 
-	function prepare_portfolio($user_email){
-		$portfolio = $this->portfoliomodel->get_portfolio( $_SESSION['user']['email'] );
+	function prepare_portfolio( $user_id ){
+		$portfolio = $this->portfoliomodel->get_portfolio( $user_id );
 		$stocks = $this->stocksmodel->get_stocks();
 		$prices = $this->stocksmodel->get_all_current_prices();
 		$output = [];

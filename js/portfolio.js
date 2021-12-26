@@ -54,7 +54,7 @@ if( 	typeof bank_series !== 'undefined' &&
 				}
 
 				chartData.datasets[a].data.push( {
-						x: moment.unix( data[a][i]['x'] ).format('YYYY-MM-DD HH:mm:ss'),
+						x: moment( data[a][i]['x'] ).format('YYYY-MM-DD HH:mm:ss'),
 						y: parseFloat( data[a][i]['y'] ),
 						meta: tmp
 					});

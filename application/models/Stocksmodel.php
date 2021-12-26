@@ -258,29 +258,34 @@ class Stocksmodel extends MY_Model {
                     'event_type' => DB_UPDATE
                     ];
         }
-        return $this->db->insert_batch($this->ticker_table, $data);
-
 
         // Why am I just duplicating player portolios each gametick?
         // seems pointless
 
-        // $q = $this->db->get( $this->users_table );
-        // if($q->num_rows() > 0){
-        //     $users = $q->result_array();
-        // }else{
-        //     $users = array();
-        // }
-        //
-        // foreach($users as $user){
-        //     $data2 = [
-        //             'user_id' => $user['id'],
-        //             'portfolio' => $user['portfolio'],
-        //             'bank_balance' => $user['bank_balance'],
-        //             'timestamp' => $now
-        //             ];
-        //     $this->db->insert($this->portfolio_history_table, $data2);
-        // }
+        $q = $this->db->get( $this->users_table );
+        if($q->num_rows() > 0){
+            $users = $q->result_array();
+        }else{
+            $users = array();
+        }
 
+        foreach($users as $user){
+            $data2[] = [
+                    'user_id' => $user['id'],
+                    'portfolio' => $user['portfolio'],
+                    'bank_balance' => $user['bank_balance'],
+                    'timestamp' => $now
+                    ];
+
+        }
+
+        if( $this->db->insert_batch($this->ticker_table, $data)  &&
+            $this->db->insert_batch($this->portfolio_history_table, $data2)
+        ){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     function update_prospectus( $stock_id, $new_text ){

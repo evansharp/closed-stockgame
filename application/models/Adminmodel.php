@@ -80,6 +80,7 @@ class Adminmodel extends MY_Model {
     }
 
     function record_login( $user_id ){
+        $this->db->update( $this->users_table, array('last_login' => date("Y-m-d H:i:s") ), array('id' => $user_id) );
         $this->db->insert( $this->login_table, [ 'user_id' => $user_id ] );
     }
 
@@ -308,6 +309,7 @@ class Adminmodel extends MY_Model {
 
     function get_login_history(){
         $this->db->select( 'id, name' );
+        $this->db->where("last_login >= NOW() + INTERVAL -7 DAY AND last_login <  NOW() + INTERVAL 0 DAY");
         $r = $this->db->get( $this->users_table );
 
         $users = $r -> result_array();
