@@ -164,5 +164,7 @@ if( typeof ticker_all !== 'undefined' ){
 		e.preventDefault();
 		ticker1.resetZoom();
 	})
+
+
 }
 });

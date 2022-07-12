@@ -13,10 +13,10 @@ class Stocksmodel extends MY_Model {
     function get_all_ticker(){
         $this->db->select('*');
         $this->db->from($this->ticker_table);
+        $this->db->where($this->ticker_table.'.timestamp > NOW() - INTERVAL 1 DAY', null, false);
+
         $this->db->join($this->stocks_table, $this->stocks_table. '.stock_id = '. $this->ticker_table . '.stock_id' );
         $this->db->join($this->segments_table, $this->segments_table. '.segment_id = '. $this->stocks_table . '.segment_id' );
-
-        $this->db->where($this->ticker_table.'.timestamp > NOW() - INTERVAL 1 DAY', null, false);
 
         $this->db->order_by($this->ticker_table.'.stock_id', 'ASC'); //sort into stock groupings
         $this->db->order_by('timestamp', 'ACS'); //draw graphs newest-to-limit data
@@ -249,6 +249,8 @@ class Stocksmodel extends MY_Model {
 
     function update_stocks( $updates ){
         $data = [];
+        $data2 = [];
+
         $now = date("Y-m-d H:i:s");
         foreach($updates as $update){
             $data[] = [
@@ -265,26 +267,33 @@ class Stocksmodel extends MY_Model {
         $q = $this->db->get( $this->users_table );
         if($q->num_rows() > 0){
             $users = $q->result_array();
+
+            foreach($users as $user){
+                $data2[] = [
+                        'user_id' => $user['id'],
+                        'portfolio' => $user['portfolio'],
+                        'bank_balance' => $user['bank_balance'],
+                        'timestamp' => $now
+                        ];
+
+            }
+
+            if( $this->db->insert_batch($this->ticker_table, $data)  &&
+                $this->db->insert_batch($this->portfolio_history_table, $data2)
+            ){
+                return true;
+            }else{
+                return false;
+            }
+
         }else{
-            $users = array();
-        }
 
-        foreach($users as $user){
-            $data2[] = [
-                    'user_id' => $user['id'],
-                    'portfolio' => $user['portfolio'],
-                    'bank_balance' => $user['bank_balance'],
-                    'timestamp' => $now
-                    ];
+            if( $this->db->insert_batch($this->ticker_table, $data) ){
+                return true;
+            }else{
+                return false;
+            }
 
-        }
-
-        if( $this->db->insert_batch($this->ticker_table, $data)  &&
-            $this->db->insert_batch($this->portfolio_history_table, $data2)
-        ){
-            return true;
-        }else{
-            return false;
         }
     }
 

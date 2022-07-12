@@ -20,14 +20,15 @@ class Adminmodel extends MY_Model {
         return array();
     }
 
-    function add_user( $email, $name, $avatar, $refresh ){
+    function add_user( $email, $name, $role, $avatar, $refresh ){
 	    $blank_portfolio = [];
         $data = [   'email' => $email,
                     'name' => $name,
+                    'user_role' => $role,
                     'google_avatar' => $avatar,
                     'google_refresh_token' => $refresh,
                     'bank_balance' => $this->starting_balance,
-                    'portfolio' => json_encode($blank_portfolio)   //will hold a JSON string of stocks owned
+                    'portfolio' => json_encode($blank_portfolio)
                 ];
         $this->db->insert($this->users_table, $data);
 
@@ -381,9 +382,9 @@ class Adminmodel extends MY_Model {
         $this->db->empty_table( $this->portfolio_history_table );
         $this->db->empty_table( $this->login_table );
 
-        $this->db->set('prospectus', NULL);
-        $this->db->where('prospectus is not null');
-        $this->db->update( $this->stocks_table );
+        // $this->db->set('prospectus', NULL);
+        // $this->db->where('prospectus is not null');
+        // $this->db->update( $this->stocks_table );
 
 
 

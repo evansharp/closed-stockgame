@@ -70,13 +70,6 @@ class Ticker extends MY_Controller {
 		}
 		array_unshift( $per_stock, array_pop( $per_stock ) );
 
-
-
-
-		//die("<pre>".print_r($per_timestamp, true)."</pre>");
-
-
-
 		$data = [ 'ticker_all' => $per_stock ];
 
 		$template_data = [
@@ -89,6 +82,16 @@ class Ticker extends MY_Controller {
 
 		$this->load->view('template', $template_data);
 
+	}
+
+	public function fetch_update( $last_tick_datetime ){
+		$this->load->library('input');
+
+		if( $this->input->is_ajax_request() ){
+			
+
+
+		}
 	}
 
 }
